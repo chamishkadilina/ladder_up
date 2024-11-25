@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ladder_up/widgets/section_header.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:ladder_up/providers/project_provider.dart';
+import 'package:ladder_up/models/subtask.dart';
+import 'package:ladder_up/widgets/section_header.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
@@ -15,12 +18,50 @@ class _SchedulePageState extends State<SchedulePage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
+  // Helper method to get tasks for selected date
+  List<Subtask> _getTasksForSelectedDate(ProjectProvider provider) {
+    if (_selectedDay == null) return [];
+
+    List<Subtask> todayTasks = [];
+
+    for (var project in provider.projects) {
+      final projectTasks = project.subtasks.where((task) {
+        if (task.taskdateTime == null) return false;
+        return isSameDay(task.taskdateTime!, _selectedDay!);
+      }).toList();
+      todayTasks.addAll(projectTasks);
+    }
+
+    return todayTasks;
+  }
+
+  // Helper method to get number of tasks for a specific day
+  List<dynamic> _getEventsForDay(DateTime day, ProjectProvider provider) {
+    int taskCount = 0;
+    for (var project in provider.projects) {
+      taskCount += project.subtasks
+          .where((task) =>
+              task.taskdateTime != null && isSameDay(task.taskdateTime!, day))
+          .length;
+    }
+    // Return a list with length equal to number of tasks
+    return List.generate(taskCount, (index) => 'task');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDay = _focusedDay;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: const Icon(Icons.arrow_back),
         ),
         title: const Text('My Schedule'),
@@ -32,80 +73,153 @@ class _SchedulePageState extends State<SchedulePage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          children: [
-            // Table calendar view
-            TableCalendar(
-              firstDay: DateTime.utc(DateTime.now().year, DateTime.january, 1),
-              lastDay: DateTime.utc(DateTime.now().year, DateTime.december, 31),
-              focusedDay: _focusedDay,
-              headerStyle: const HeaderStyle(
-                titleCentered: true,
-                formatButtonVisible: false,
-              ),
-              calendarStyle: CalendarStyle(
-                todayDecoration: BoxDecoration(
-                  color: Colors.blueAccent.withOpacity(0.2),
-                ),
-                selectedDecoration: const BoxDecoration(
-                  color: Colors.blue,
-                ),
-                defaultDecoration: const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                weekendDecoration: const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                todayTextStyle: const TextStyle(
-                  color: Colors.blue,
-                ),
-                selectedTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-                weekendTextStyle: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 16,
-                ),
-                defaultTextStyle: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-              ),
-              calendarFormat: _calendarFormat,
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
-              },
-              onDaySelected: (selectedDay, focusedDay) {
-                if (!isSameDay(_selectedDay, selectedDay)) {
-                  setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
-                  });
-                }
-              },
-              onFormatChanged: (format) {
-                if (_calendarFormat != format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                }
-              },
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
-              },
-            ),
-            const SizedBox(height: 16),
+      body: Consumer<ProjectProvider>(
+        builder: (context, projectProvider, child) {
+          final tasksForSelectedDate =
+              _getTasksForSelectedDate(projectProvider);
 
-            // This Day Task
-            SectionHeader(
-              title: 'This Day Task',
-              selectedDate: DateFormat('MMM dd yyyy').format(_focusedDay),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              children: [
+                // Table calendar view
+                TableCalendar(
+                  firstDay:
+                      DateTime.utc(DateTime.now().year, DateTime.january, 1),
+                  lastDay:
+                      DateTime.utc(DateTime.now().year, DateTime.december, 31),
+                  focusedDay: _focusedDay,
+                  headerStyle: const HeaderStyle(
+                    titleCentered: true,
+                    formatButtonVisible: false,
+                  ),
+                  calendarStyle: CalendarStyle(
+                    todayDecoration: BoxDecoration(
+                      color: Colors.blueAccent.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    selectedDecoration: const BoxDecoration(
+                      color: Colors.blue,
+                      shape: BoxShape.circle,
+                    ),
+                    markerDecoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    markersAlignment: Alignment.bottomCenter,
+                    markersAnchor: 0.8,
+                    markerSize: 8,
+                    markerMargin: const EdgeInsets.symmetric(horizontal: 0.8),
+                    todayTextStyle: const TextStyle(color: Colors.blue),
+                    selectedTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                    weekendTextStyle: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                    ),
+                    defaultTextStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                  ),
+                  calendarFormat: _calendarFormat,
+                  selectedDayPredicate: (day) {
+                    return isSameDay(_selectedDay, day);
+                  },
+                  onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+                  },
+                  onFormatChanged: (format) {
+                    if (_calendarFormat != format) {
+                      setState(() {
+                        _calendarFormat = format;
+                      });
+                    }
+                  },
+                  onPageChanged: (focusedDay) {
+                    _focusedDay = focusedDay;
+                  },
+                  eventLoader: (day) => _getEventsForDay(day, projectProvider),
+                ),
+                const SizedBox(height: 16),
+
+                // This Day Task Sectoion
+                SectionHeader(
+                  title: 'This Day Task',
+                  selectedDate: DateFormat('MMM dd yyyy').format(_selectedDay!),
+                ),
+
+                // Task List
+                Expanded(
+                  child: tasksForSelectedDate.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'No tasks for this day',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: tasksForSelectedDate.length,
+                          itemBuilder: (context, index) {
+                            final subtask = tasksForSelectedDate[index];
+                            return ListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              leading: IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.more_vert),
+                              ),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    projectProvider.projects
+                                        .firstWhere((project) =>
+                                            project.subtasks.contains(subtask))
+                                        .name,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    subtask.title,
+                                    style: TextStyle(
+                                      decoration: subtask.isCompleted
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none,
+                                      color: subtask.isCompleted
+                                          ? Colors.grey
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: Checkbox(
+                                value: subtask.isCompleted,
+                                onChanged: (value) {
+                                  final project = projectProvider.projects
+                                      .firstWhere(
+                                          (p) => p.subtasks.contains(subtask));
+                                  projectProvider.toggleTaskStatus(
+                                      project, subtask);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

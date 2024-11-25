@@ -25,7 +25,7 @@ class ProjectList extends StatelessWidget {
           child: ListTile(
             leading: Icon(project.icon),
             title: Text(
-              project.title,
+              project.name,
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,

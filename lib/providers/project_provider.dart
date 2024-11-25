@@ -20,7 +20,7 @@ class ProjectProvider extends ChangeNotifier {
 
   // Add a project
   void addProject(String title, {IconData? icon}) {
-    _projects.add(Project(title: title, icon: icon!));
+    _projects.add(Project(name: title, icon: icon!));
     notifyListeners();
   }
 
