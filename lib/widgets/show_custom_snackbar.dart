@@ -4,9 +4,12 @@ void showCustomSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message),
+      duration: const Duration(seconds: 2),
+      backgroundColor: Colors.black,
       behavior: SnackBarBehavior.floating,
-      duration: const Duration(seconds: 3),
-      margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
     ),
   );
 }
