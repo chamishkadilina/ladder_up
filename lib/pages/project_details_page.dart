@@ -38,7 +38,7 @@ class ProjectDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              project.title,
+              project.name,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
