@@ -15,7 +15,7 @@ class ProjectList extends StatelessWidget {
     return ListView.builder(
       itemCount: projectProvider.projects.length,
       itemBuilder: (context, index) {
-        final project = projectProvider.projects[index];
+        final project = projectProvider.projects[index]; // get specific project
         return Card(
           color: Colors.white,
           elevation: 0,

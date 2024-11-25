@@ -9,6 +9,7 @@ class Project {
   Project({
     required this.title,
     required this.icon,
+
     List<Subtask>? subtasks,
   }) : subtasks = subtasks ?? [];
 }
