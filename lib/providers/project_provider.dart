@@ -19,15 +19,15 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   // Add a project
-  void addProject(String title) {
-    _projects.add(Project(title: title));
+  void addProject(String title, {IconData? icon}) {
+    _projects.add(Project(title: title, icon: icon!));
     notifyListeners();
   }
 
   // Add a task for a project
-  void addTask(Project project, String taskTitle) {
-    final subtask = Subtask(title: taskTitle);
-    project.subtasks.add(subtask);
+  void addTask(Project project, String taskName, {DateTime? date}) {
+    final newSubtask = Subtask(title: taskName, taskdateTime: date);
+    project.subtasks.add(newSubtask);
     notifyListeners();
   }
 
