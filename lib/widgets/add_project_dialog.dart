@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/providers/project_provider.dart';
+import 'package:ladder_up/widgets/show_custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class AddProjectDialog extends StatefulWidget {
@@ -15,42 +16,59 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
 
   final List<IconData> availableIcons = [
     Icons.phone_android_sharp,
+    Icons.computer,
+    Icons.code,
+    Icons.web,
+    Icons.devices,
     Icons.motorcycle,
-    Icons.color_lens,
     Icons.sports,
+    Icons.fitness_center,
+    Icons.restaurant,
+    Icons.local_cafe,
+    Icons.color_lens,
+    Icons.music_note,
+    Icons.camera_alt,
+    Icons.brush,
+    Icons.movie,
     Icons.home,
+    Icons.weekend,
+    Icons.kitchen,
+    Icons.yard,
+    Icons.chair,
     Icons.shopping_cart,
     Icons.book,
     Icons.pets,
     Icons.travel_explore,
-    Icons.phone_android_sharp,
-    Icons.motorcycle,
-    Icons.color_lens,
-    Icons.sports,
-    Icons.home,
-    Icons.shopping_cart,
-    Icons.book,
-    Icons.pets,
-    Icons.travel_explore,
+    Icons.work,
   ];
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Add Project"),
+      title: const Center(
+        child: Text("Add New Project"),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                labelText: 'Project Name',
                 hintText: "Enter project name",
+                prefixIcon: const Icon(Icons.edit),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
+              textCapitalization: TextCapitalization.words,
+              autofocus: true,
             ),
             const SizedBox(height: 16),
             const Text("Select an Icon:"),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             SizedBox(
               height: 200, // Set a height constraint for the icon grid
               child: SingleChildScrollView(
@@ -66,6 +84,10 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1,
+                            color: Colors.grey.shade300,
+                          ),
                           color: selectedIcon == icon
                               ? Colors.blueAccent.withOpacity(0.2)
                               : Colors.transparent,
@@ -92,17 +114,23 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text("Cancel"),
+          child: const Text('Cancel'),
         ),
-        TextButton(
+        FilledButton(
           onPressed: () {
             if (controller.text.isNotEmpty && selectedIcon != null) {
               Provider.of<ProjectProvider>(context, listen: false)
                   .addProject(controller.text, icon: selectedIcon);
               Navigator.of(context).pop();
             }
+            if (controller.text.isEmpty) {
+              showCustomSnackBar(context, 'Please enter a project name');
+            }
+            if (selectedIcon == null) {
+              showCustomSnackBar(context, 'Please select an icon');
+            }
           },
-          child: const Text("Add"),
+          child: const Text('Add Project'),
         ),
       ],
     );
