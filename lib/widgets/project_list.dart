@@ -23,9 +23,7 @@ class ProjectList extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListTile(
-            leading: Icon(
-              project.icon,
-            ),
+            leading: Icon(project.icon),
             title: Text(
               project.title,
               style: const TextStyle(

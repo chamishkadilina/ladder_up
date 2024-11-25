@@ -30,16 +30,6 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
     Icons.camera_alt,
     Icons.brush,
     Icons.movie,
-    Icons.home,
-    Icons.weekend,
-    Icons.kitchen,
-    Icons.yard,
-    Icons.chair,
-    Icons.shopping_cart,
-    Icons.book,
-    Icons.pets,
-    Icons.travel_explore,
-    Icons.work,
   ];
 
   @override
@@ -118,16 +108,19 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
         ),
         FilledButton(
           onPressed: () {
-            if (controller.text.isNotEmpty && selectedIcon != null) {
+            if (controller.text.isEmpty || selectedIcon == null) {
+              if (controller.text.isEmpty && selectedIcon == null) {
+                showCustomSnackBar(
+                    context, 'Please enter a project name and select an icon');
+              } else if (controller.text.isEmpty) {
+                showCustomSnackBar(context, 'Please enter a project name');
+              } else if (selectedIcon == null) {
+                showCustomSnackBar(context, 'Please select an icon');
+              }
+            } else {
               Provider.of<ProjectProvider>(context, listen: false)
                   .addProject(controller.text, icon: selectedIcon);
               Navigator.of(context).pop();
-            }
-            if (controller.text.isEmpty) {
-              showCustomSnackBar(context, 'Please enter a project name');
-            }
-            if (selectedIcon == null) {
-              showCustomSnackBar(context, 'Please select an icon');
             }
           },
           child: const Text('Add Project'),

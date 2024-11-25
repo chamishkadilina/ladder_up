@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/models/subtask.dart';
 import 'package:ladder_up/providers/project_provider.dart';
@@ -35,6 +36,12 @@ class SubtaskListView extends StatelessWidget {
               decoration: subtask.isCompleted
                   ? TextDecoration.lineThrough
                   : TextDecoration.none,
+              color: subtask.isCompleted ? Colors.grey : Colors.black,
+            ),
+          ),
+          subtitle: Text(
+            DateFormat('dd MMM yyyy').format(subtask.taskdateTime!),
+            style: TextStyle(
               color: subtask.isCompleted ? Colors.grey : Colors.black,
             ),
           ),

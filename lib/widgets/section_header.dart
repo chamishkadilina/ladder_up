@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class SectionHeader extends StatelessWidget {
   final String title;
+  final String? selectedDate;
   final Function()? onTap;
 
   const SectionHeader({
     required this.title,
+    this.selectedDate,
     this.onTap,
     super.key,
   });
@@ -20,10 +22,16 @@ class SectionHeader extends StatelessWidget {
           title,
           style: const TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.w500,
           ),
         ),
-        // custom add button
+        const Spacer(),
+
+        // Picked date shows
+        if (selectedDate != null) // Ensure selectedDate is not null
+          Text(selectedDate!),
+        const SizedBox(width: 8),
+
+        // Custom add button
         GestureDetector(
           onTap: onTap,
           child: Container(
@@ -38,7 +46,7 @@ class SectionHeader extends StatelessWidget {
               color: Color(0xFFF83EFF),
             ),
           ),
-        )
+        ),
       ],
     );
   }
