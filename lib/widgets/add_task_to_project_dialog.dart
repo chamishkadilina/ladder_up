@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/providers/project_provider.dart';
+import 'package:ladder_up/widgets/show_custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class AddProjectTaskDialog extends StatefulWidget {
+class AddTaskToProjectDialog extends StatefulWidget {
   final Project project;
 
-  const AddProjectTaskDialog({
+  const AddTaskToProjectDialog({
     super.key,
     required this.project,
   });
 
   @override
-  _AddProjectTaskDialogState createState() => _AddProjectTaskDialogState();
+  _AddTaskToProjectDialogState createState() => _AddTaskToProjectDialogState();
 }
 
-class _AddProjectTaskDialogState extends State<AddProjectTaskDialog> {
+class _AddTaskToProjectDialogState extends State<AddTaskToProjectDialog> {
   final TextEditingController _taskNameController = TextEditingController();
   DateTime? _selectedDate;
 
@@ -42,25 +43,41 @@ class _AddProjectTaskDialogState extends State<AddProjectTaskDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // TextField for Task Name
           TextField(
             controller: _taskNameController,
             decoration: const InputDecoration(
-              hintText: "Enter task name",
+              labelText: "Task Name",
+              border: OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+
+          // Date Picker for Task Date
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                _selectedDate != null
-                    ? "Due date: ${DateFormat('yyyy-MM-dd').format(_selectedDate!)}"
-                    : "No date selected",
-                style: const TextStyle(fontSize: 16),
-              ),
-              IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: () => _pickDate(context),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () async {
+                    final pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate:
+                          DateTime.now().subtract(const Duration(days: 365)),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    if (pickedDate != null) {
+                      setState(() {
+                        _selectedDate = pickedDate;
+                      });
+                    }
+                  },
+                  child: Text(
+                    _selectedDate == null
+                        ? "Pick a Date"
+                        : DateFormat('MMM dd yyyy').format(_selectedDate!),
+                  ),
+                ),
               ),
             ],
           ),
@@ -81,6 +98,9 @@ class _AddProjectTaskDialogState extends State<AddProjectTaskDialog> {
                 _taskNameController.text,
                 date: _selectedDate,
               );
+            } else {
+              // Optionally show an error message
+              showCustomSnackBar(context, 'Please fill in all fields');
             }
             Navigator.of(context).pop();
           },
