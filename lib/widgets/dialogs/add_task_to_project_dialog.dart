@@ -14,14 +14,14 @@ class AddTaskToProjectDialog extends StatefulWidget {
   });
 
   @override
-  _AddTaskToProjectDialogState createState() => _AddTaskToProjectDialogState();
+  AddTaskToProjectDialogState createState() => AddTaskToProjectDialogState();
 }
 
-class _AddTaskToProjectDialogState extends State<AddTaskToProjectDialog> {
+class AddTaskToProjectDialogState extends State<AddTaskToProjectDialog> {
   final TextEditingController _taskNameController = TextEditingController();
   DateTime? _selectedDate;
 
-  void _pickDate(BuildContext context) async {
+  void _pickDate() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -36,14 +36,32 @@ class _AddTaskToProjectDialogState extends State<AddTaskToProjectDialog> {
     }
   }
 
+  void _addTask(BuildContext context) {
+    if (_taskNameController.text.isEmpty || _selectedDate == null) {
+      showCustomSnackBar(context, 'Please fill in all fields.');
+      return;
+    }
+
+    Provider.of<ProjectProvider>(context, listen: false).addTask(
+      widget.project,
+      _taskNameController.text,
+      date: _selectedDate,
+    );
+
+    Navigator.of(context).pop();
+    showCustomSnackBar(
+      context,
+      'Task "${_taskNameController.text}" added successfully!',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Add A Task"),
+      title: const Text("Add a Task"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // TextField for Task Name
           TextField(
             controller: _taskNameController,
             decoration: const InputDecoration(
@@ -52,30 +70,15 @@ class _AddTaskToProjectDialogState extends State<AddTaskToProjectDialog> {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Date Picker for Task Date
           Row(
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () async {
-                    final pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate:
-                          DateTime.now().subtract(const Duration(days: 365)),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (pickedDate != null) {
-                      setState(() {
-                        _selectedDate = pickedDate;
-                      });
-                    }
-                  },
+                  onPressed: _pickDate,
                   child: Text(
                     _selectedDate == null
                         ? "Pick a Date"
-                        : DateFormat('MMM dd yyyy').format(_selectedDate!),
+                        : DateFormat('MMM dd, yyyy').format(_selectedDate!),
                   ),
                 ),
               ),
@@ -91,19 +94,7 @@ class _AddTaskToProjectDialogState extends State<AddTaskToProjectDialog> {
           child: const Text("Cancel"),
         ),
         TextButton(
-          onPressed: () {
-            if (_taskNameController.text.isNotEmpty) {
-              Provider.of<ProjectProvider>(context, listen: false).addTask(
-                widget.project,
-                _taskNameController.text,
-                date: _selectedDate,
-              );
-            } else {
-              // Optionally show an error message
-              showCustomSnackBar(context, 'Please fill in all fields');
-            }
-            Navigator.of(context).pop();
-          },
+          onPressed: () => _addTask(context),
           child: const Text("Add"),
         ),
       ],

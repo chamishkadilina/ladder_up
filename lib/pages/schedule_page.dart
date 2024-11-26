@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ladder_up/widgets/add_task_with_project_selection_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/add_task_with_project_selection_dialog.dart';
+import 'package:ladder_up/widgets/show_custom_snackbar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -159,6 +160,13 @@ class _SchedulePageState extends State<SchedulePage> {
                     final projectNames = projectProvider.projects
                         .map((project) => project.name)
                         .toList();
+
+                    if (projectNames.isEmpty) {
+                      // Handle case where no projects are available
+                      showCustomSnackBar(context,
+                          'Please create a project before adding tasks.');
+                      return;
+                    }
 
                     showDialog(
                       context: context,

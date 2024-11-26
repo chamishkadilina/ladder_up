@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
-void showCustomSnackBar(BuildContext context, String message) {
+void showCustomSnackBar(
+  BuildContext context,
+  String message, {
+  Duration duration = const Duration(seconds: 2),
+}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message),
-      duration: const Duration(seconds: 2),
+      duration: duration,
       backgroundColor: Colors.black,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(

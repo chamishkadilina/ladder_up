@@ -48,10 +48,20 @@ class ProjectProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // remove a project
+  // Remove a project
   void removeProject(Project project) {
     _projects.remove(project);
     notifyListeners();
+  }
+
+  // Rename project
+  void renameProject(Project project, String newName) {
+    final index = _projects.indexOf(project);
+    if (index != -1) {
+      // Update the name
+      _projects[index].name = newName;
+      notifyListeners();
+    }
   }
 
   // remove a task from a project

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/providers/project_provider.dart';
-import 'package:ladder_up/widgets/add_project_dialog.dart';
-import 'package:ladder_up/widgets/add_task_with_project_selection_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/add_project_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/add_task_with_project_selection_dialog.dart';
 import 'package:ladder_up/widgets/empty_state.dart';
 import 'package:ladder_up/widgets/project_list.dart';
 import 'package:ladder_up/widgets/section_header.dart';
+import 'package:ladder_up/widgets/show_custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -54,13 +55,8 @@ class HomePage extends StatelessWidget {
 
                   if (projectNames.isEmpty) {
                     // Handle case where no projects are available
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Please create a project before adding tasks.',
-                        ),
-                      ),
-                    );
+                    showCustomSnackBar(context,
+                        'Please create a project before adding tasks.');
                     return;
                   }
 
