@@ -5,7 +5,7 @@ import 'package:ladder_up/widgets/dialogs/add_task_with_project_selection_dialog
 import 'package:ladder_up/widgets/empty_state.dart';
 import 'package:ladder_up/widgets/project_list.dart';
 import 'package:ladder_up/widgets/section_header.dart';
-import 'package:ladder_up/widgets/show_custom_snackbar.dart';
+import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {

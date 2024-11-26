@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/providers/project_provider.dart';
-import 'package:ladder_up/widgets/show_custom_snackbar.dart';
+import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 
 void showDeleteConfirmationDialog(
     BuildContext context, ProjectProvider projectProvider, Project project) {

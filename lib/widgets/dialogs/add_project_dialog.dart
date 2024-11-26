@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/providers/project_provider.dart';
-import 'package:ladder_up/widgets/show_custom_snackbar.dart';
+import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:provider/provider.dart';
 
 class AddProjectDialog extends StatefulWidget {

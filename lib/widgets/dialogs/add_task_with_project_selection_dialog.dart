@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ladder_up/widgets/show_custom_snackbar.dart';
+import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 
 class AddTaskWithProjectSelectionDialog extends StatefulWidget {
   final List<String> projectNames;

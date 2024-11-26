@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/widgets/dialogs/add_task_with_project_selection_dialog.dart';
-import 'package:ladder_up/widgets/show_custom_snackbar.dart';
+import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
