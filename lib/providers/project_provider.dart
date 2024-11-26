@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/models/subtask.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class ProjectProvider extends ChangeNotifier {
   final List<Project> _projects = [];
@@ -16,6 +17,22 @@ class ProjectProvider extends ChangeNotifier {
   // Get incomplete tasks from a project
   List<Subtask> getIncompleteTasks(Project project) {
     return project.subtasks.where((task) => !task.isCompleted).toList();
+  }
+
+  // Get today tasks
+  List<Subtask> getTasksForToday() {
+    DateTime today = DateTime.now();
+    List<Subtask> todayTasks = [];
+
+    for (var project in projects) {
+      final projectTasks = project.subtasks.where((task) {
+        if (task.taskdateTime == null) return false;
+        return isSameDay(task.taskdateTime!, today);
+      }).toList();
+      todayTasks.addAll(projectTasks);
+    }
+
+    return todayTasks;
   }
 
   // Add a project
