@@ -29,7 +29,6 @@ void showDeleteConfirmationDialog(
               Navigator.of(context).pop();
               showCustomSnackBar(
                 context,
-                duration: const Duration(seconds: 3),
                 '${project.name} has been deleted.',
               );
             },
