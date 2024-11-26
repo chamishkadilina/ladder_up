@@ -113,7 +113,7 @@ class _AddTaskDialogState extends State<AddTaskWithProjectSelectionDialog> {
               Navigator.of(context).pop();
             } else {
               // Optionally show an error message
-              showCustomSnackBar(context, 'Please fill in all fields');
+              showCustomSnackBar(context, 'Please fill in all fields.');
             }
           },
           child: const Text("Add"),

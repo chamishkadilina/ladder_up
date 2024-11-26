@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/providers/project_provider.dart';
-import 'package:ladder_up/widgets/add_task_to_project_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/add_task_to_project_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/delete_confirmation_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/rename_dialog.dart.dart';
 import 'package:ladder_up/widgets/section_header.dart';
-
 import 'package:ladder_up/widgets/subtask_list_view.dart';
 import 'package:provider/provider.dart';
 
@@ -26,9 +27,37 @@ class ProjectDetailsPage extends StatelessWidget {
         title: const Text('Project Details'),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert),
+          // Pop up manu button
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'rename') {
+                showRenameDialog(context, project);
+              } else if (value == 'delete') {
+                showDeleteConfirmationDialog(context, projectProvider, project);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'rename',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text('Rename Project'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Delete Project'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),

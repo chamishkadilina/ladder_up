@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ladder_up/models/subtask.dart';
 
 class Project {
-  final String name;
+  String name;
   final IconData icon;
   List<Subtask> subtasks;
 
