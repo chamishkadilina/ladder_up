@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/providers/project_provider.dart';
-import 'package:ladder_up/widgets/add_project_task_dialog.dart';
+import 'package:ladder_up/widgets/add_task_to_project_dialog.dart';
 import 'package:ladder_up/widgets/section_header.dart';
 
 import 'package:ladder_up/widgets/subtask_list_view.dart';
@@ -52,7 +52,8 @@ class ProjectDetailsPage extends StatelessWidget {
               onTap: () {
                 return showDialog(
                   context: context,
-                  builder: (context) => AddProjectTaskDialog(project: project),
+                  builder: (context) =>
+                      AddTaskToProjectDialog(project: project),
                 );
               },
             ),

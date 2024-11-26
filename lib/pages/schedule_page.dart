@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ladder_up/widgets/add_task_with_project_selection_dialog.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -152,6 +153,28 @@ class _SchedulePageState extends State<SchedulePage> {
                 SectionHeader(
                   title: 'This Day Task',
                   selectedDate: DateFormat('MMM dd yyyy').format(_selectedDay!),
+                  onTap: () {
+                    final projectProvider =
+                        Provider.of<ProjectProvider>(context, listen: false);
+                    final projectNames = projectProvider.projects
+                        .map((project) => project.name)
+                        .toList();
+
+                    showDialog(
+                      context: context,
+                      builder: (context) => AddTaskWithProjectSelectionDialog(
+                        projectNames: projectNames,
+                        onTaskAdded: (projectName, taskName, taskDate) {
+                          final selectedProject =
+                              projectProvider.projects.firstWhere(
+                            (project) => project.name == projectName,
+                          );
+                          projectProvider.addTask(selectedProject, taskName,
+                              date: taskDate);
+                        },
+                      ),
+                    );
+                  },
                 ),
 
                 // Task List
