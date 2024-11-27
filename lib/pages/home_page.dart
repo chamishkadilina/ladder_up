@@ -6,6 +6,7 @@ import 'package:ladder_up/widgets/empty_state.dart';
 import 'package:ladder_up/widgets/project_list.dart';
 import 'package:ladder_up/widgets/section_header.dart';
 import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
+import 'package:ladder_up/widgets/task_list_regular.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -85,64 +86,9 @@ class HomePage extends StatelessWidget {
               // Display Today's Task List
               Expanded(
                 flex: 1,
-                child: todayTasks.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'No tasks for today. Tap "+" to add some!',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: todayTasks.length,
-                        itemBuilder: (context, index) {
-                          final task = todayTasks[index];
-                          final project = projectProvider.projects.firstWhere(
-                            (p) => p.subtasks.contains(task),
-                          );
-
-                          return ListTile(
-                            contentPadding: const EdgeInsets.all(0),
-                            leading: IconButton(
-                              onPressed: () {
-                                // Handle more options
-                              },
-                              icon: const Icon(Icons.more_vert),
-                            ),
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  project.name,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Text(
-                                  task.title,
-                                  style: TextStyle(
-                                    decoration: task.isCompleted
-                                        ? TextDecoration.lineThrough
-                                        : TextDecoration.none,
-                                    color: task.isCompleted
-                                        ? Colors.grey
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            trailing: Checkbox(
-                              value: task.isCompleted,
-                              onChanged: (value) {
-                                projectProvider.toggleTaskStatus(project, task);
-                              },
-                            ),
-                          );
-                        },
-                      ),
+                child: TaskListRegular(
+                  tasks: todayTasks,
+                ),
               )
             ],
           ),

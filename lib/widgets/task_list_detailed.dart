@@ -4,8 +4,8 @@ import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/models/subtask.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 
-class SubtaskListView extends StatelessWidget {
-  const SubtaskListView({
+class TaskListDetailed extends StatelessWidget {
+  const TaskListDetailed({
     super.key,
     required this.tasks,
     required this.projectProvider,
@@ -41,8 +41,8 @@ class SubtaskListView extends StatelessWidget {
           ),
           subtitle: Text(
             DateFormat('dd MMM yyyy').format(subtask.taskdateTime!),
-            style: TextStyle(
-              color: subtask.isCompleted ? Colors.grey : Colors.black,
+            style: const TextStyle(
+              color: Colors.grey,
             ),
           ),
           trailing: Checkbox(

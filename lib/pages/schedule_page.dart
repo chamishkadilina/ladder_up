@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/widgets/dialogs/add_task_with_project_selection_dialog.dart';
 import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
+import 'package:ladder_up/widgets/task_list_regular.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -187,65 +188,9 @@ class _SchedulePageState extends State<SchedulePage> {
 
                 // Task List
                 Expanded(
-                  child: tasksForSelectedDate.isEmpty
-                      ? const Center(
-                          child: Text(
-                            'No tasks for this day',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16,
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: tasksForSelectedDate.length,
-                          itemBuilder: (context, index) {
-                            final subtask = tasksForSelectedDate[index];
-                            return ListTile(
-                              contentPadding: const EdgeInsets.all(0),
-                              leading: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.more_vert),
-                              ),
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    projectProvider.projects
-                                        .firstWhere((project) =>
-                                            project.subtasks.contains(subtask))
-                                        .name,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    subtask.title,
-                                    style: TextStyle(
-                                      decoration: subtask.isCompleted
-                                          ? TextDecoration.lineThrough
-                                          : TextDecoration.none,
-                                      color: subtask.isCompleted
-                                          ? Colors.grey
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              trailing: Checkbox(
-                                value: subtask.isCompleted,
-                                onChanged: (value) {
-                                  final project = projectProvider.projects
-                                      .firstWhere(
-                                          (p) => p.subtasks.contains(subtask));
-                                  projectProvider.toggleTaskStatus(
-                                      project, subtask);
-                                },
-                              ),
-                            );
-                          },
-                        ),
+                  child: TaskListRegular(
+                    tasks: tasksForSelectedDate,
+                  ),
                 ),
               ],
             ),

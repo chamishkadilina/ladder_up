@@ -5,7 +5,7 @@ import 'package:ladder_up/widgets/dialogs/add_task_to_project_dialog.dart';
 import 'package:ladder_up/widgets/dialogs/delete_confirmation_dialog.dart';
 import 'package:ladder_up/widgets/dialogs/rename_dialog.dart.dart';
 import 'package:ladder_up/widgets/section_header.dart';
-import 'package:ladder_up/widgets/subtask_list_view.dart';
+import 'package:ladder_up/widgets/task_list_detailed.dart';
 import 'package:provider/provider.dart';
 
 class ProjectDetailsPage extends StatelessWidget {
@@ -105,7 +105,7 @@ class ProjectDetailsPage extends StatelessWidget {
                       ),
                     ),
                   )
-                : SubtaskListView(
+                : TaskListDetailed(
                     tasks: incompleteTasks,
                     projectProvider: projectProvider,
                     project: project,
@@ -128,7 +128,7 @@ class ProjectDetailsPage extends StatelessWidget {
                       ),
                     ),
                   )
-                : SubtaskListView(
+                : TaskListDetailed(
                     tasks: completedTasks,
                     projectProvider: projectProvider,
                     project: project,
