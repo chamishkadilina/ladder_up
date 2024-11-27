@@ -82,6 +82,15 @@ class ProjectProvider extends ChangeNotifier {
     }
   }
 
+  // Rename task
+  void renameTask(Project project, Subtask task, String newTitle) {
+    final taskIndex = project.subtasks.indexOf(task);
+    if (taskIndex != -1) {
+      project.subtasks[taskIndex].title = newTitle;
+      notifyListeners();
+    }
+  }
+
   // remove a task from a project
   void removeTask(Project project, Subtask task) {
     project.subtasks.remove(task);

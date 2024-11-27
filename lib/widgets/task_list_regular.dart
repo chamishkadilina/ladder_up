@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/models/subtask.dart';
+import 'package:ladder_up/widgets/dialogs/task_delete_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/task_rename_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TaskListRegular extends StatelessWidget {
@@ -38,11 +40,48 @@ class TaskListRegular extends StatelessWidget {
 
         return ListTile(
           contentPadding: const EdgeInsets.all(0),
-          leading: IconButton(
-            onPressed: () {
-              // Handle more options
+          leading: PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'rename') {
+                showTaskRenameDialog(context, project, task);
+              } else if (value == 'edit') {
+                // showDeleteDialog(context, projectProvider, project);
+              } else if (value == 'delete') {
+                showTaskDeleteDialog(context, projectProvider, project, task);
+              }
             },
-            icon: const Icon(Icons.more_vert),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'rename',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text('Rename Task'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'edit',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit_document, color: Colors.black54),
+                    SizedBox(width: 8),
+                    Text('Edit Task'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Delete Task'),
+                  ],
+                ),
+              ),
+            ],
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
