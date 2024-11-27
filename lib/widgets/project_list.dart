@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ladder_up/pages/project_details_page.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 
@@ -16,6 +17,24 @@ class ProjectList extends StatelessWidget {
       itemCount: projectProvider.projects.length,
       itemBuilder: (context, index) {
         final project = projectProvider.projects[index]; // get specific project
+
+        // calculate progress percentage
+        final totalSubtasks = project.subtasks.length;
+        final completedSubtasks =
+            projectProvider.getCompletedTasks(project).length;
+        final progress = totalSubtasks > 0
+            ? (completedSubtasks / totalSubtasks * 100).round()
+            : 0;
+
+        // Determine project start and end dates
+        final startDate = projectProvider.getProjectStartDate(project);
+        final endDate = projectProvider.getProjectEndDate(project);
+        final dateFormat = DateFormat('MMM dd, yyyy');
+        final formattedStartDate =
+            startDate != null ? dateFormat.format(startDate) : 'N/A';
+        final formattedEndDate =
+            endDate != null ? dateFormat.format(endDate) : 'N/A';
+
         return Card(
           color: Colors.white,
           elevation: 0,
@@ -34,20 +53,21 @@ class ProjectList extends StatelessWidget {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                // Date range and completion percentage
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'project.startDate : project.endDate',
-                      style: TextStyle(
+                      '$formattedStartDate - $formattedEndDate',
+                      style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                         fontWeight: FontWeight.w300,
                       ),
                     ),
                     Text(
-                      '80 %',
-                      style: TextStyle(
+                      '$progress %',
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -56,7 +76,9 @@ class ProjectList extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
-                  value: 80 / 100,
+                  value: totalSubtasks > 0
+                      ? completedSubtasks / totalSubtasks
+                      : 0, // Avoid division by zero
                   minHeight: 6,
                   backgroundColor: Colors.grey[300],
                   color: Colors.blueAccent,

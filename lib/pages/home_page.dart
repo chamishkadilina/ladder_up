@@ -54,7 +54,6 @@ class HomePage extends StatelessWidget {
                       .toList();
 
                   if (projectNames.isEmpty) {
-                    // Handle case where no projects are available
                     showCustomSnackBar(context,
                         'Please create a project before adding tasks.');
                     return;
@@ -64,15 +63,18 @@ class HomePage extends StatelessWidget {
                     context: context,
                     builder: (context) => AddTaskWithProjectSelectionDialog(
                       projectNames: projectNames,
+                      isTodayTask: true, // Indicate this is for today's task
                       onTaskAdded: (projectName, taskName, taskDate) {
-                        final selectedProject = projectProvider.projects
-                            .firstWhere(
-                                (project) => project.name == projectName);
+                        final selectedProject =
+                            projectProvider.projects.firstWhere(
+                          (project) => project.name == projectName,
+                        );
 
                         projectProvider.addTask(
                           selectedProject,
                           taskName,
-                          date: DateTime.now(), // Use current date for "today"
+                          // Will automatically be DateTime.now()
+                          date: taskDate,
                         );
                       },
                     ),

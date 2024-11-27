@@ -35,6 +35,24 @@ class ProjectProvider extends ChangeNotifier {
     return todayTasks;
   }
 
+  // Get project start date (first task date)
+  DateTime? getProjectStartDate(Project project) {
+    if (project.subtasks.isEmpty) return null;
+    final sortedTasks = project.subtasks
+      ..sort((a, b) =>
+          a.taskdateTime?.compareTo(b.taskdateTime ?? DateTime.now()) ?? 0);
+    return sortedTasks.first.taskdateTime;
+  }
+
+  // Get project end date (last task date)
+  DateTime? getProjectEndDate(Project project) {
+    if (project.subtasks.isEmpty) return null;
+    final sortedTasks = project.subtasks
+      ..sort((a, b) =>
+          b.taskdateTime?.compareTo(a.taskdateTime ?? DateTime.now()) ?? 0);
+    return sortedTasks.first.taskdateTime;
+  }
+
   // Add a project
   void addProject(String title, {IconData? icon}) {
     _projects.add(Project(name: title, icon: icon!));

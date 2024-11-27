@@ -4,13 +4,18 @@ import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 
 class AddTaskWithProjectSelectionDialog extends StatefulWidget {
   final List<String> projectNames;
-  final Function(String projectName, String taskName, DateTime taskDate)
-      onTaskAdded;
+  final Function(
+    String projectName,
+    String taskName,
+    DateTime taskDate,
+  ) onTaskAdded;
+  final bool isTodayTask;
 
   const AddTaskWithProjectSelectionDialog({
     super.key,
     required this.projectNames,
     required this.onTaskAdded,
+    this.isTodayTask = false,
   });
 
   @override
@@ -26,7 +31,8 @@ class _AddTaskDialogState extends State<AddTaskWithProjectSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Add A Task"),
+      title:
+          Text(widget.isTodayTask ? 'Add a Task for Today' : 'Add a New Task'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -63,34 +69,36 @@ class _AddTaskDialogState extends State<AddTaskWithProjectSelectionDialog> {
           ),
           const SizedBox(height: 16),
 
-          // Date Picker for Task Date
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () async {
-                    final pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate:
-                          DateTime.now().subtract(const Duration(days: 365)),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (pickedDate != null) {
-                      setState(() {
-                        selectedDate = pickedDate;
-                      });
-                    }
-                  },
-                  child: Text(
-                    selectedDate == null
-                        ? "Pick a Date"
-                        : DateFormat('MMM dd yyyy').format(selectedDate!),
+          // Date Picker (Hidden for "Today's Task")
+          if (!widget.isTodayTask) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      final pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate:
+                            DateTime.now().subtract(const Duration(days: 365)),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          selectedDate = pickedDate;
+                        });
+                      }
+                    },
+                    child: Text(
+                      selectedDate == null
+                          ? "Pick a Date"
+                          : DateFormat('MMM dd yyyy').format(selectedDate!),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
       actions: [
@@ -102,17 +110,17 @@ class _AddTaskDialogState extends State<AddTaskWithProjectSelectionDialog> {
         ),
         TextButton(
           onPressed: () {
-            if (selectedProjectName != null &&
-                taskName.isNotEmpty &&
-                selectedDate != null) {
+            if (selectedProjectName != null && taskName.isNotEmpty) {
               widget.onTaskAdded(
                 selectedProjectName!,
                 taskName,
-                selectedDate!,
+                widget.isTodayTask
+                    ? DateTime.now() // Use current date for "Today's Task"
+                    : (selectedDate ??
+                        DateTime.now()), // Default to today if no date
               );
               Navigator.of(context).pop();
             } else {
-              // Optionally show an error message
               showCustomSnackBar(context, 'Please fill in all fields.');
             }
           },
