@@ -4,7 +4,7 @@ import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:provider/provider.dart';
 
-void showRenameDialog(BuildContext context, Project project) {
+void showProjectRenameDialog(BuildContext context, Project project) {
   final TextEditingController controller =
       TextEditingController(text: project.name);
 

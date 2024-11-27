@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
+import 'package:ladder_up/models/subtask.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 
-void showDeleteConfirmationDialog(
-    BuildContext context, ProjectProvider projectProvider, Project project) {
+void showTaskDeleteDialog(BuildContext context, ProjectProvider projectProvider,
+    Project project, Subtask task) {
   showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Delete Project'),
+        title: const Text('Delete Task'),
         content: Text(
-            'Are you sure you want to delete the project "${project.name}"? This action cannot be undone.'),
+            'Are you sure you want to delete the task "${task.title}"? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () {
@@ -21,15 +22,15 @@ void showDeleteConfirmationDialog(
           ),
           TextButton(
             onPressed: () {
-              // remove the project
-              projectProvider.removeProject(project);
+              // remove the task
+              projectProvider.removeTask(project, task);
               // Close the dialog
               Navigator.of(context).pop();
-              // Navigate back to the previous screen
-              Navigator.of(context).pop();
+
+              // Show a snackbar to confirm deletion
               showCustomSnackBar(
                 context,
-                '${project.name} has been deleted.',
+                'Task "${task.title}" has been deleted.',
               );
             },
             child: const Text(

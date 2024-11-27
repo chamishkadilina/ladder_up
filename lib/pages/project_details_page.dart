@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/widgets/dialogs/add_task_to_project_dialog.dart';
-import 'package:ladder_up/widgets/dialogs/delete_confirmation_dialog.dart';
-import 'package:ladder_up/widgets/dialogs/rename_dialog.dart.dart';
+import 'package:ladder_up/widgets/dialogs/project_delete_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/project_rename_dialog.dart.dart';
 import 'package:ladder_up/widgets/section_header.dart';
 import 'package:ladder_up/widgets/task_list_detailed.dart';
 import 'package:provider/provider.dart';
@@ -31,9 +31,9 @@ class ProjectDetailsPage extends StatelessWidget {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'rename') {
-                showRenameDialog(context, project);
+                showProjectRenameDialog(context, project);
               } else if (value == 'delete') {
-                showDeleteConfirmationDialog(context, projectProvider, project);
+                showProjectDeleteDialog(context, projectProvider, project);
               }
             },
             itemBuilder: (context) => [
