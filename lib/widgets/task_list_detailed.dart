@@ -4,7 +4,7 @@ import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/models/subtask.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/widgets/dialogs/task_delete_dialog.dart';
-import 'package:ladder_up/widgets/dialogs/task_rename_dialog.dart';
+import 'package:ladder_up/widgets/dialogs/task_edit_dialog.dart';
 
 class TaskListDetailed extends StatelessWidget {
   const TaskListDetailed({
@@ -30,25 +30,13 @@ class TaskListDetailed extends StatelessWidget {
           contentPadding: const EdgeInsets.all(0),
           leading: PopupMenuButton<String>(
             onSelected: (value) {
-              if (value == 'rename') {
-                showTaskRenameDialog(context, project, task);
-              } else if (value == 'edit') {
-                // showDeleteDialog(context, projectProvider, project);
+              if (value == 'edit') {
+                showTaskEditDialog(context, project, task);
               } else if (value == 'delete') {
                 showTaskDeleteDialog(context, projectProvider, project, task);
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'rename',
-                child: Row(
-                  children: [
-                    Icon(Icons.edit, color: Colors.black54),
-                    SizedBox(width: 8),
-                    Text('Rename Task'),
-                  ],
-                ),
-              ),
               const PopupMenuItem(
                 value: 'edit',
                 child: Row(

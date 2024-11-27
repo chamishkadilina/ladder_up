@@ -35,6 +35,15 @@ class ProjectProvider extends ChangeNotifier {
     return todayTasks;
   }
 
+  //Update task date
+  void updateTaskDate(Project project, Subtask task, DateTime newDate) {
+    final taskIndex = project.subtasks.indexOf(task);
+    if (taskIndex != -1) {
+      project.subtasks[taskIndex].taskdateTime = newDate;
+      notifyListeners();
+    }
+  }
+
   // Get project start date (first task date)
   DateTime? getProjectStartDate(Project project) {
     if (project.subtasks.isEmpty) return null;
