@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "59370060069",
+    "project_id": "ladder-up-f4910",
+    "storage_bucket": "ladder-up-f4910.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59370060069:android:0701a7bb729043527582cc",
+        "android_client_info": {
+          "package_name": "com.example.ladder_up"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu3wZZuiSOfRcUsviZDimlQzIO7ID8VU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
