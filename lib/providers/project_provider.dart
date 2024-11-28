@@ -1,13 +1,222 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/models/subtask.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ProjectProvider extends ChangeNotifier {
-  final List<Project> _projects = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  List<Project> _projects = [];
 
   // Get all project list
   List<Project> get projects => _projects;
+
+  // Fetch projects for the current user
+  Future<void> fetchProjects() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('projects')
+          .where('userId', isEqualTo: currentUser.uid)
+          .get();
+
+      _projects =
+          querySnapshot.docs.map((doc) => Project.fromFirestore(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching projects: $e');
+    }
+  }
+
+  // Add a project to Firestore
+  Future<void> addProject(String title, {IconData? icon}) async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+
+    try {
+      final newProject = Project(
+        name: title,
+        icon: icon ?? Icons.folder,
+        userId: currentUser.uid,
+      );
+
+      DocumentReference docRef =
+          await _firestore.collection('projects').add(newProject.toMap());
+
+      newProject.id = docRef.id;
+      _projects.add(newProject);
+      notifyListeners();
+    } catch (e) {
+      print('Error adding project: $e');
+    }
+  }
+
+  // Remove project from Firestore
+  Future<void> removeProject(Project project) async {
+    try {
+      await _firestore.collection('projects').doc(project.id).delete();
+      _projects.remove(project);
+      notifyListeners();
+    } catch (e) {
+      print('Error removing project: $e');
+    }
+  }
+
+  // Rename project and update in Firestore
+  Future<void> renameProject(Project project, String newName) async {
+    try {
+      final index = _projects.indexOf(project);
+      if (index != -1) {
+        _projects[index].name = newName;
+
+        // Update in Firestore
+        await _firestore
+            .collection('projects')
+            .doc(project.id)
+            .update({'name': newName});
+
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error renaming project: $e');
+    }
+  }
+
+  // Update project in Firestore
+  Future<void> updateProject(Project project) async {
+    try {
+      await _firestore
+          .collection('projects')
+          .doc(project.id)
+          .update(project.toMap());
+      notifyListeners();
+    } catch (e) {
+      print('Error updating project: $e');
+    }
+  }
+
+  // Add a task for a project and update in Firestore
+  Future<void> addTask(Project project, String taskName,
+      {DateTime? date}) async {
+    try {
+      final newSubtask = Subtask(title: taskName, taskdateTime: date);
+      project.subtasks.add(newSubtask);
+
+      // Update project in Firestore
+      await _firestore
+          .collection('projects')
+          .doc(project.id)
+          .update(project.toMap());
+
+      notifyListeners();
+    } catch (e) {
+      print('Error adding task: $e');
+    }
+  }
+
+  // Remove a task from a project and update in Firestore
+  Future<void> removeTask(Project project, Subtask task) async {
+    try {
+      project.subtasks.remove(task);
+
+      // Update project in Firestore
+      await _firestore
+          .collection('projects')
+          .doc(project.id)
+          .update(project.toMap());
+
+      notifyListeners();
+    } catch (e) {
+      print('Error removing task: $e');
+    }
+  }
+
+  // Rename task and update in Firestore
+  Future<void> renameTask(
+      Project project, Subtask task, String newTitle) async {
+    try {
+      final taskIndex = project.subtasks.indexOf(task);
+      if (taskIndex != -1) {
+        project.subtasks[taskIndex].title = newTitle;
+
+        // Update project in Firestore
+        await _firestore
+            .collection('projects')
+            .doc(project.id)
+            .update(project.toMap());
+
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error renaming task: $e');
+    }
+  }
+
+  // Toggle task completion status and update in Firestore
+  Future<void> toggleTaskStatus(Project project, Subtask task) async {
+    try {
+      final taskIndex = project.subtasks.indexOf(task);
+      if (taskIndex != -1) {
+        task.isCompleted = !task.isCompleted;
+
+        // Update project in Firestore
+        await _firestore
+            .collection('projects')
+            .doc(project.id)
+            .update(project.toMap());
+
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error toggling task status: $e');
+    }
+  }
+
+  // Reorder task to a specific position and update in Firestore
+  Future<void> reorderTask(Project project, int oldIndex, int newIndex) async {
+    try {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final Subtask task = project.subtasks.removeAt(oldIndex);
+      project.subtasks.insert(newIndex, task);
+
+      // Update project in Firestore
+      await _firestore
+          .collection('projects')
+          .doc(project.id)
+          .update(project.toMap());
+
+      notifyListeners();
+    } catch (e) {
+      print('Error reordering task: $e');
+    }
+  }
+
+  // Update task date and sync with Firestore
+  Future<void> updateTaskDate(
+      Project project, Subtask task, DateTime newDate) async {
+    try {
+      final taskIndex = project.subtasks.indexOf(task);
+      if (taskIndex != -1) {
+        project.subtasks[taskIndex].taskdateTime = newDate;
+
+        // Update project in Firestore
+        await _firestore
+            .collection('projects')
+            .doc(project.id)
+            .update(project.toMap());
+
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error updating task date: $e');
+    }
+  }
 
   // Get completed tasks from a project
   List<Subtask> getCompletedTasks(Project project) {
@@ -35,15 +244,6 @@ class ProjectProvider extends ChangeNotifier {
     return todayTasks;
   }
 
-  //Update task date
-  void updateTaskDate(Project project, Subtask task, DateTime newDate) {
-    final taskIndex = project.subtasks.indexOf(task);
-    if (taskIndex != -1) {
-      project.subtasks[taskIndex].taskdateTime = newDate;
-      notifyListeners();
-    }
-  }
-
   // Get project start date (first task date)
   DateTime? getProjectStartDate(Project project) {
     if (project.subtasks.isEmpty) return null;
@@ -60,68 +260,5 @@ class ProjectProvider extends ChangeNotifier {
       ..sort((a, b) =>
           b.taskdateTime?.compareTo(a.taskdateTime ?? DateTime.now()) ?? 0);
     return sortedTasks.first.taskdateTime;
-  }
-
-  // Add a project
-  void addProject(String title, {IconData? icon}) {
-    _projects.add(Project(name: title, icon: icon!));
-    notifyListeners();
-  }
-
-  // Add a task for a project
-  void addTask(Project project, String taskName, {DateTime? date}) {
-    final newSubtask = Subtask(title: taskName, taskdateTime: date);
-    project.subtasks.add(newSubtask);
-    notifyListeners();
-  }
-
-  // Remove a project
-  void removeProject(Project project) {
-    _projects.remove(project);
-    notifyListeners();
-  }
-
-  // Rename project
-  void renameProject(Project project, String newName) {
-    final index = _projects.indexOf(project);
-    if (index != -1) {
-      // Update the name
-      _projects[index].name = newName;
-      notifyListeners();
-    }
-  }
-
-  // Rename task
-  void renameTask(Project project, Subtask task, String newTitle) {
-    final taskIndex = project.subtasks.indexOf(task);
-    if (taskIndex != -1) {
-      project.subtasks[taskIndex].title = newTitle;
-      notifyListeners();
-    }
-  }
-
-  // remove a task from a project
-  void removeTask(Project project, Subtask task) {
-    project.subtasks.remove(task);
-    notifyListeners();
-  }
-
-  // Toggle task completion status
-  void toggleTaskStatus(Project project, Subtask task) {
-    final taskIndex = project.subtasks.indexOf(task);
-    if (taskIndex != -1) {
-      task.isCompleted = !task.isCompleted;
-      notifyListeners();
-    }
-  }
-
-  // Reorder task to a specific position
-  void reorderTask(Project project, int oldIndex, int newIndex) {
-    if (oldIndex < newIndex) {
-      newIndex -= 1;
-    }
-    final Subtask task = project.subtasks.removeAt(oldIndex);
-    project.subtasks.insert(newIndex, task);
-    notifyListeners();
   }
 }

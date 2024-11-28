@@ -9,8 +9,22 @@ import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:ladder_up/widgets/task_list_regular.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch projects when home screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProjectProvider>(context, listen: false).fetchProjects();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
