@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:ladder_up/navigation_bar.dart';
-import 'package:ladder_up/pages/login_page.dart';
+import 'package:ladder_up/pages/login_or_signin_page.dart';
 import 'package:ladder_up/providers/auth_provider.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:provider/provider.dart';
