@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/providers/auth_provider.dart';
+import 'package:ladder_up/services/auth_service.dart';
 import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:ladder_up/widgets/square_tile.dart';
 import 'package:ladder_up/widgets/text_field.dart';
@@ -185,14 +186,15 @@ class LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SquareTile(
-                        imagePath: 'assets/ic_google.png',
+                        imagePath: 'assets/icons/ic_google.png',
                         onTap: () {
                           // Google sign-in logic
+                          AuthService().signInWithGoogle();
                         },
                       ),
                       const SizedBox(width: 16),
                       SquareTile(
-                        imagePath: 'assets/ic_apple.png',
+                        imagePath: 'assets/icons/ic_apple.png',
                         onTap: () {
                           // Apple sign-in logic
                         },
