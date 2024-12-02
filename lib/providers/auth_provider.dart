@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -46,6 +47,9 @@ class AuthProvider extends ChangeNotifier {
   Future<void> signOut() async {
     await _auth.signOut();
     _user = null;
+    // Clear local preferences
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
     notifyListeners();
   }
 }
