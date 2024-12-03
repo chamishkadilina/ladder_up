@@ -7,6 +7,7 @@ import 'package:ladder_up/widgets/dialogs/project_rename_dialog.dart.dart';
 import 'package:ladder_up/widgets/section_header.dart';
 import 'package:ladder_up/widgets/task_list_detailed.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class ProjectDetailsPage extends StatelessWidget {
   final Project project;
@@ -22,12 +23,29 @@ class ProjectDetailsPage extends StatelessWidget {
     final incompleteTasks = projectProvider.getIncompleteTasks(project);
     final completedTasks = projectProvider.getCompletedTasks(project);
 
+    // Calculate progress percentage
+    final totalSubtasks = project.subtasks.length;
+    final completedSubtasks = projectProvider.getCompletedTasks(project).length;
+    final progress = totalSubtasks > 0
+        ? (completedSubtasks / totalSubtasks * 100).round()
+        : 0;
+
+    // Determine project start and end dates
+    final startDate = projectProvider.getProjectStartDate(project);
+    final endDate = projectProvider.getProjectEndDate(project);
+    final dateFormat = DateFormat('MMM dd, yyyy');
+    final formattedStartDate =
+        startDate != null ? dateFormat.format(startDate) : 'N/A';
+    final formattedEndDate =
+        endDate != null ? dateFormat.format(endDate) : 'N/A';
+
     return Scaffold(
+      backgroundColor: const Color(0xFFF3F2F8),
       appBar: AppBar(
         title: const Text('Project Details'),
         centerTitle: true,
         actions: [
-          // Pop up manu button
+          // Pop up menu button
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'rename') {
@@ -65,15 +83,65 @@ class ProjectDetailsPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              project.name,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
+            // Top section - Project title, dates, and progress
+            Card(
+              color: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ListTile(
+                leading:
+                    Text(project.emoji, style: const TextStyle(fontSize: 32)),
+                title: Text(
+                  project.name,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Date range and completion percentage
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '$formattedStartDate - $formattedEndDate',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                        Text(
+                          '$progress %',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    LinearProgressIndicator(
+                      value: totalSubtasks > 0
+                          ? completedSubtasks / totalSubtasks
+                          : 0, // Avoid division by zero
+                      minHeight: 6,
+                      backgroundColor: Colors.grey[300],
+                      color: Colors.blueAccent,
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 8),
+
+            const SizedBox(height: 16),
 
             // Task List Section
             SectionHeader(
@@ -86,19 +154,13 @@ class ProjectDetailsPage extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(height: 8),
 
-            const SizedBox(height: 16),
-
-            // In Progress Tasks
-            const Text(
-              'In Progress',
-              style: TextStyle(fontSize: 20),
-            ),
+            // incompleted Tasks
             incompleteTasks.isEmpty
                 ? const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
+                    child: Center(
                       child: Text(
                         'No tasks are currently in progress. Add a new task to get started!',
                         style: TextStyle(color: Colors.grey, fontSize: 16),
@@ -117,14 +179,27 @@ class ProjectDetailsPage extends StatelessWidget {
               'Completed',
               style: TextStyle(fontSize: 20),
             ),
+            const SizedBox(height: 8),
+
             completedTasks.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'No tasks have been completed yet.',
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/icons/ic_notasks.png',
+                            scale: 2.4,
+                          ),
+                          const Text(
+                            'No tasks have been completed yet.',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   )

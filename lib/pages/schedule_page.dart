@@ -60,6 +60,7 @@ class _SchedulePageState extends State<SchedulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF3F2F8),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -185,6 +186,7 @@ class _SchedulePageState extends State<SchedulePage> {
                     );
                   },
                 ),
+                const SizedBox(height: 8),
 
                 // Task List
                 Expanded(

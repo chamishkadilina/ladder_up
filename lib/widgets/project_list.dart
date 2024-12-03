@@ -36,13 +36,17 @@ class ProjectList extends StatelessWidget {
             endDate != null ? dateFormat.format(endDate) : 'N/A';
 
         return Card(
+          margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 0.0),
           color: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListTile(
-            leading: Text(project.emoji, style: const TextStyle(fontSize: 32)),
+            leading: Text(
+              project.emoji,
+              style: const TextStyle(fontSize: 32),
+            ),
             title: Text(
               project.name,
               style: const TextStyle(
