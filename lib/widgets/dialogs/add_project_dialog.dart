@@ -12,24 +12,29 @@ class AddProjectDialog extends StatefulWidget {
 
 class _AddProjectDialogState extends State<AddProjectDialog> {
   final TextEditingController controller = TextEditingController();
-  IconData? selectedIcon;
+  String? selectedEmoji;
 
-  final List<IconData> availableIcons = [
-    Icons.phone_android_sharp,
-    Icons.computer,
-    Icons.code,
-    Icons.web,
-    Icons.devices,
-    Icons.motorcycle,
-    Icons.sports,
-    Icons.fitness_center,
-    Icons.restaurant,
-    Icons.local_cafe,
-    Icons.color_lens,
-    Icons.music_note,
-    Icons.camera_alt,
-    Icons.brush,
-    Icons.movie,
+  final List<String> availableEmojis = [
+    '💻', // Laptop
+    '📱', // Mobile Phone
+    '🖥️', // Desktop Computer
+    '🌐', // Globe
+    '🚀', // Rocket
+    '🏀', // Basketball
+    '🏋️', // Weight Lifting
+    '🍽️', // Plate and Cutlery
+    '☕', // Coffee
+    '🎨', // Palette
+    '🎵', // Musical Note
+    '📷', // Camera
+    '🖌️', // Paintbrush
+    '🎬', // Clapperboard
+    '📊', // Bar Chart
+    '🤖', // Robot
+    '🔬', // Microscope
+    '✈️', // Airplane
+    '🚲', // Bicycle
+    '🌍', // Earth Globe
   ];
 
   @override
@@ -57,19 +62,19 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
               autofocus: true,
             ),
             const SizedBox(height: 16),
-            const Text("Select an Icon:"),
+            const Text("Select an Emoji:"),
             const SizedBox(height: 16),
             SizedBox(
-              height: 200, // Set a height constraint for the icon grid
+              height: 200, // Set a height constraint for the emoji grid
               child: SingleChildScrollView(
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8, // Add spacing between rows
-                  children: availableIcons.map((icon) {
+                  children: availableEmojis.map((emoji) {
                     return GestureDetector(
                       onTap: () {
                         setState(() {
-                          selectedIcon = icon; // Update selected icon
+                          selectedEmoji = emoji; // Update selected emoji
                         });
                       },
                       child: Container(
@@ -78,17 +83,20 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
                             width: 1,
                             color: Colors.grey.shade300,
                           ),
-                          color: selectedIcon == icon
+                          color: selectedEmoji == emoji
                               ? Colors.blueAccent.withOpacity(0.2)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.all(8),
-                        child: Icon(
-                          icon,
-                          color:
-                              selectedIcon == icon ? Colors.blue : Colors.black,
-                          size: 32,
+                        child: Text(
+                          emoji,
+                          style: TextStyle(
+                            fontSize: 32,
+                            color: selectedEmoji == emoji
+                                ? Colors.blue
+                                : Colors.black,
+                          ),
                         ),
                       ),
                     );
@@ -108,23 +116,28 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
         ),
         FilledButton(
           onPressed: () {
-            if (controller.text.isEmpty || selectedIcon == null) {
-              if (controller.text.isEmpty && selectedIcon == null) {
+            if (controller.text.isEmpty || selectedEmoji == null) {
+              if (controller.text.isEmpty && selectedEmoji == null) {
                 showCustomSnackBar(
-                    context, 'Please enter a project name and select an icon');
+                    context, 'Please enter a project name and select an emoji');
               } else if (controller.text.isEmpty) {
                 showCustomSnackBar(context, 'Please enter a project name');
-              } else if (selectedIcon == null) {
-                showCustomSnackBar(context, 'Please select an icon');
+              } else if (selectedEmoji == null) {
+                showCustomSnackBar(context, 'Please select an emoji');
               }
             } else {
+              // If selectedEmoji is null, set a default emoji or handle it
+              final emojiToAdd =
+                  selectedEmoji ?? '🌍'; // Default emoji if none selected
+
+              // Pass the emoji to the provider method
               Provider.of<ProjectProvider>(context, listen: false)
-                  .addProject(controller.text, icon: selectedIcon);
+                  .addProject(controller.text, emoji: emojiToAdd);
               Navigator.of(context).pop();
             }
           },
           child: const Text('Add Project'),
-        ),
+        )
       ],
     );
   }

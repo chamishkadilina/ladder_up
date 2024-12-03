@@ -32,15 +32,15 @@ class ProjectProvider extends ChangeNotifier {
     }
   }
 
-  // Add a project to Firestore
-  Future<void> addProject(String title, {IconData? icon}) async {
+  // Add a project to Firestore with emoji
+  Future<void> addProject(String title, {required String emoji}) async {
     User? currentUser = _auth.currentUser;
     if (currentUser == null) return;
 
     try {
       final newProject = Project(
         name: title,
-        icon: icon ?? Icons.folder,
+        emoji: emoji,
         userId: currentUser.uid,
       );
 
