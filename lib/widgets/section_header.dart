@@ -38,12 +38,12 @@ class SectionHeader extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: const Color(0xFFFEEDFF),
+              color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
               Icons.add,
-              color: Color(0xFFF83EFF),
+              color: Color(0xFF754BE5),
             ),
           ),
         ),

@@ -52,13 +52,14 @@ class _HomePageState extends State<HomePage> {
 
               // Project List
               Expanded(
+                flex: 2,
                 child: projectProvider.projects.isEmpty
                     ? const EmptyState(
                         text: 'No projects added yet. Tap "+" to create one!',
                       )
                     : ProjectList(projectProvider: projectProvider),
               ),
-              const SizedBox(height: 34),
+              const SizedBox(height: 8),
 
               // Today's Task Section
               SectionHeader(
@@ -96,6 +97,7 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
+              const SizedBox(height: 8),
 
               // Display Today's Task List
               Expanded(
