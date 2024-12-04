@@ -148,7 +148,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 const Text(
                   'App version: 1.0.0',
                   style: TextStyle(
-                    color: Color(0xFF754BE5),
+                    color: Colors.grey,
                   ),
                 ),
                 const SizedBox(height: 8),

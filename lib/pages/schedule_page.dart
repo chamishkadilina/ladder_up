@@ -87,68 +87,73 @@ class _SchedulePageState extends State<SchedulePage> {
             child: Column(
               children: [
                 // Table calendar view
-                TableCalendar(
-                  firstDay:
-                      DateTime.utc(DateTime.now().year, DateTime.january, 1),
-                  lastDay:
-                      DateTime.utc(DateTime.now().year, DateTime.december, 31),
-                  focusedDay: _focusedDay,
-                  headerStyle: const HeaderStyle(
-                    titleCentered: true,
-                    formatButtonVisible: false,
-                  ),
-                  calendarStyle: CalendarStyle(
-                    todayDecoration: BoxDecoration(
-                      color: Colors.blueAccent.withOpacity(0.2),
-                      shape: BoxShape.circle,
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  color: Colors.white,
+                  child: TableCalendar(
+                    firstDay:
+                        DateTime.utc(DateTime.now().year, DateTime.january, 1),
+                    lastDay: DateTime.utc(
+                        DateTime.now().year, DateTime.december, 31),
+                    focusedDay: _focusedDay,
+                    headerStyle: const HeaderStyle(
+                      titleCentered: true,
+                      formatButtonVisible: false,
                     ),
-                    selectedDecoration: const BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
+                    calendarStyle: CalendarStyle(
+                      todayDecoration: BoxDecoration(
+                        color: Colors.blueAccent.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      selectedDecoration: const BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      markerDecoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      markersAlignment: Alignment.bottomCenter,
+                      markersAnchor: 0.8,
+                      markerSize: 8,
+                      markerMargin: const EdgeInsets.symmetric(horizontal: 0.8),
+                      todayTextStyle: const TextStyle(color: Colors.blue),
+                      selectedTextStyle: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      weekendTextStyle: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                      ),
+                      defaultTextStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
                     ),
-                    markerDecoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    markersAlignment: Alignment.bottomCenter,
-                    markersAnchor: 0.8,
-                    markerSize: 8,
-                    markerMargin: const EdgeInsets.symmetric(horizontal: 0.8),
-                    todayTextStyle: const TextStyle(color: Colors.blue),
-                    selectedTextStyle: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                    weekendTextStyle: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 16,
-                    ),
-                    defaultTextStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
-                  ),
-                  calendarFormat: _calendarFormat,
-                  selectedDayPredicate: (day) {
-                    return isSameDay(_selectedDay, day);
-                  },
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                  },
-                  onFormatChanged: (format) {
-                    if (_calendarFormat != format) {
+                    calendarFormat: _calendarFormat,
+                    selectedDayPredicate: (day) {
+                      return isSameDay(_selectedDay, day);
+                    },
+                    onDaySelected: (selectedDay, focusedDay) {
                       setState(() {
-                        _calendarFormat = format;
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
                       });
-                    }
-                  },
-                  onPageChanged: (focusedDay) {
-                    _focusedDay = focusedDay;
-                  },
-                  eventLoader: (day) => _getEventsForDay(day, projectProvider),
+                    },
+                    onFormatChanged: (format) {
+                      if (_calendarFormat != format) {
+                        setState(() {
+                          _calendarFormat = format;
+                        });
+                      }
+                    },
+                    onPageChanged: (focusedDay) {
+                      _focusedDay = focusedDay;
+                    },
+                    eventLoader: (day) =>
+                        _getEventsForDay(day, projectProvider),
+                  ),
                 ),
                 const SizedBox(height: 16),
 
