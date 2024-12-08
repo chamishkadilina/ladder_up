@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/models/subtask.dart';
+import 'package:ladder_up/services/notification_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ProjectProvider extends ChangeNotifier {
@@ -112,6 +113,8 @@ class ProjectProvider extends ChangeNotifier {
           .doc(project.id)
           .update(project.toMap());
 
+      // Reschedule notifications
+      await scheduleTaskNotifications();
       notifyListeners();
     } catch (e) {
       print('Error adding task: $e');
@@ -129,6 +132,8 @@ class ProjectProvider extends ChangeNotifier {
           .doc(project.id)
           .update(project.toMap());
 
+      // Reschedule notifications
+      await scheduleTaskNotifications();
       notifyListeners();
     } catch (e) {
       print('Error removing task: $e');
@@ -211,6 +216,8 @@ class ProjectProvider extends ChangeNotifier {
             .doc(project.id)
             .update(project.toMap());
 
+        // Reschedule notifications
+        await scheduleTaskNotifications();
         notifyListeners();
       }
     } catch (e) {
@@ -260,5 +267,18 @@ class ProjectProvider extends ChangeNotifier {
       ..sort((a, b) =>
           b.taskdateTime?.compareTo(a.taskdateTime ?? DateTime.now()) ?? 0);
     return sortedTasks.first.taskdateTime;
+  }
+
+  // Method to schedule daily task notifications
+  Future<void> scheduleTaskNotifications() async {
+    // Ensure projects are fetched
+    await fetchProjects();
+
+    // Get today's tasks
+    List<Subtask> todayTasks = getTasksForToday();
+
+    // Schedule notification for today's tasks
+    await NotificationService.scheduleDailyTaskNotification(
+        todayTasks, _projects);
   }
 }
