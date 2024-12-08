@@ -20,9 +20,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Fetch projects when home screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProjectProvider>(context, listen: false).fetchProjects();
+      final projectProvider =
+          Provider.of<ProjectProvider>(context, listen: false);
+      projectProvider.fetchProjects().then((_) {
+        // Reschedule notifications after fetching projects
+        projectProvider.scheduleTaskNotifications();
+      });
     });
   }
 

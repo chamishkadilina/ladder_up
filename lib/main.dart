@@ -5,12 +5,17 @@ import 'package:ladder_up/pages/login_or_signin_page.dart';
 import 'package:ladder_up/providers/auth_provider.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/providers/setting_provider.dart';
+import 'package:ladder_up/services/notification_service.dart';
 import 'package:ladder_up/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await NotificationService.init();
+  tz.initializeTimeZones();
+
   runApp(
     MultiProvider(
       providers: [
@@ -21,6 +26,10 @@ void main() async {
       child: const MyApp(),
     ),
   );
+
+  // Schedule task notifications
+  final projectProvider = ProjectProvider();
+  await projectProvider.scheduleTaskNotifications();
 }
 
 class MyApp extends StatelessWidget {
