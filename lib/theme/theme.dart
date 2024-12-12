@@ -17,7 +17,7 @@ class MyAppTheme {
     fontFamily: 'Inter',
     brightness: Brightness.light,
     primaryColor: Colors.blue,
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: const Color(0xFFF5F7FA),
     textTheme: MyTextTheme.lightTextTheme,
     appBarTheme: MyAppBarTheme.lightAppBarTheme,
     checkboxTheme: MyCheckBoxtheme.lightCheckBoxTheme,

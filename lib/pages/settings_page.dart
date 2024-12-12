@@ -25,64 +25,90 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
+        // backgroundColor: const Color.fromARGB(255, 145, 145, 145),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // User Name container
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(16),
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.4),
+                      width: 1.5,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.shade100,
-                        blurRadius: 6,
-                        spreadRadius: 1,
+                        color: Colors.blue.shade100.withOpacity(0.4),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 4),
                       )
                     ],
                   ),
                   child: Row(
                     children: [
-                      const SizedBox(width: 12),
+                      Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.blue.shade100.withOpacity(0.5),
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blue.shade100.withOpacity(0.3),
+                                  blurRadius: 15,
+                                )
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              radius: 40,
+                              backgroundImage: authProvider.user?.photoURL !=
+                                      null
+                                  ? NetworkImage(authProvider.user!.photoURL!)
+                                  : null,
+                              backgroundColor: Colors.white.withOpacity(0.4),
+                              child: authProvider.user?.photoURL == null
+                                  ? Icon(Icons.person,
+                                      size: 50, color: Colors.blue.shade300)
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               authProvider.user?.displayName ?? 'User',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black87,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.blue.shade900,
+                                letterSpacing: 0.5,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               authProvider.user?.email ?? 'user@example.com',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey.shade600,
+                                color: Colors.blue.shade700,
                                 fontWeight: FontWeight.w400,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
-                      ),
-                      CircleAvatar(
-                        radius: 32,
-                        backgroundImage: authProvider.user?.photoURL != null
-                            ? NetworkImage(authProvider.user!.photoURL!)
-                            : null,
-                        backgroundColor: Colors.grey.shade200,
-                        child: authProvider.user?.photoURL == null
-                            ? const Icon(Icons.person, size: 24)
-                            : null,
                       ),
                     ],
                   ),
@@ -100,10 +126,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     _buildSettingsTile(
                       context,
                       icon: Icons.account_circle,
-                      titleWidget: Row(
+                      titleWidget: const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Account',
                             style: TextStyle(fontWeight: FontWeight.w400),
                           ),
@@ -111,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             'Free User',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade600,
+                              color: Color(0xFF754BE5),
                             ),
                           ),
                         ],
@@ -133,8 +159,22 @@ class _SettingsPageState extends State<SettingsPage> {
                     _buildSettingsTile(
                       context,
                       icon: Icons.language,
-                      title: 'Language',
-                      subtitle: settingsProvider.settings.language,
+                      titleWidget: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Language',
+                            style: TextStyle(fontWeight: FontWeight.w400),
+                          ),
+                          Text(
+                            'en',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF754BE5),
+                            ),
+                          ),
+                        ],
+                      ),
                       onTap: () => _showLanguageDialog(context),
                     ),
                     _buildSettingsTile(
@@ -153,7 +193,22 @@ class _SettingsPageState extends State<SettingsPage> {
                     _buildSettingsTile(
                       context,
                       icon: Icons.color_lens_outlined,
-                      title: 'Theme',
+                      titleWidget: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Theme',
+                            style: TextStyle(fontWeight: FontWeight.w400),
+                          ),
+                          Text(
+                            'System',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF754BE5),
+                            ),
+                          ),
+                        ],
+                      ),
                       subtitle: (ThemeMode mode) {
                         // ... (same as original implementation)
                       }(settingsProvider.settings.themeMode),
