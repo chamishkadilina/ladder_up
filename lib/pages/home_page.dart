@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/widgets/dialogs/add_project_dialog.dart';
-import 'package:ladder_up/widgets/dialogs/add_task_with_project_selection_dialog.dart';
 import 'package:ladder_up/widgets/empty_state.dart';
 import 'package:ladder_up/widgets/project_list.dart';
 import 'package:ladder_up/widgets/section_header.dart';
-import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:ladder_up/widgets/task_list_regular.dart';
 import 'package:provider/provider.dart';
 
@@ -36,10 +34,9 @@ class _HomePageState extends State<HomePage> {
     final todayTasks = projectProvider.getTasksForToday();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F2F8),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
           child: Column(
             children: [
               // My Projects Section
@@ -56,7 +53,7 @@ class _HomePageState extends State<HomePage> {
 
               // Project List
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: projectProvider.projects.isEmpty
                     ? const EmptyState(
                         text: 'No projects added yet. Tap "+" to create one!',
@@ -66,40 +63,9 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 8),
 
               // Today's Task Section
-              SectionHeader(
+              const SectionHeader(
                 title: "Today's task",
-                onTap: () {
-                  final projectNames = projectProvider.projects
-                      .map((project) => project.name)
-                      .toList();
-
-                  if (projectNames.isEmpty) {
-                    showCustomSnackBar(context,
-                        'Please create a project before adding tasks.');
-                    return;
-                  }
-
-                  showDialog(
-                    context: context,
-                    builder: (context) => AddTaskWithProjectSelectionDialog(
-                      projectNames: projectNames,
-                      isTodayTask: true, // Indicate this is for today's task
-                      onTaskAdded: (projectName, taskName, taskDate) {
-                        final selectedProject =
-                            projectProvider.projects.firstWhere(
-                          (project) => project.name == projectName,
-                        );
-
-                        projectProvider.addTask(
-                          selectedProject,
-                          taskName,
-                          // Will automatically be DateTime.now()
-                          date: taskDate,
-                        );
-                      },
-                    ),
-                  );
-                },
+                showButton: false,
               ),
               const SizedBox(height: 8),
 

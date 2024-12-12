@@ -6,7 +6,7 @@ import 'package:ladder_up/providers/auth_provider.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/providers/setting_provider.dart';
 import 'package:ladder_up/services/notification_service.dart';
-import 'package:ladder_up/theme.dart';
+import 'package:ladder_up/theme/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -43,10 +43,11 @@ class MyApp extends StatelessWidget {
           // Set language
           locale: Locale(settingsProvider.settings.language),
 
-          // Set theme based on settings
-          themeMode: settingsProvider.settings.themeMode,
-          theme: lightTheme,
-          darkTheme: darkTheme,
+          // theme
+          themeMode: ThemeMode.system,
+          theme: MyAppTheme.lightTheme,
+          darkTheme: MyAppTheme.darkTheme,
+
           title: 'Ladder Up',
           home: Consumer<AuthProvider>(
             builder: (context, authProvider, child) {

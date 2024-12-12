@@ -26,12 +26,12 @@ class TaskListRegular extends StatelessWidget {
             'assets/icons/ic_notasks.png',
             scale: 2.4,
           ),
-          const Text(
+          Text(
             'No tasks available',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.grey),
           ),
           const SizedBox(
             height: 36,
@@ -66,23 +66,30 @@ class TaskListRegular extends StatelessWidget {
                     }
                   },
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit_document, color: Colors.black54),
-                          SizedBox(width: 8),
-                          Text('Edit Task'),
+                          const Icon(Icons.edit_document,
+                              color: Colors.black54),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Edit Task',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
                         ],
                       ),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Delete Task'),
+                          const Icon(Icons.delete, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Delete Task',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
                         ],
                       ),
                     ),
@@ -96,14 +103,16 @@ class TaskListRegular extends StatelessWidget {
                     children: [
                       Text(
                         project.name,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge
+                            ?.copyWith(color: Colors.grey),
                       ),
                       Text(
                         task.title,
                         style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.bodyMedium?.fontSize,
                           decoration: task.isCompleted
                               ? TextDecoration.lineThrough
                               : TextDecoration.none,

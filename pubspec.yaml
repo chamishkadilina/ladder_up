@@ -37,6 +37,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_local_notifications: ^18.0.1
+  flutter_svg: ^2.0.16
+  glassmorphism: ^3.0.0
   google_fonts: ^6.2.1
   google_sign_in: ^6.2.2
   intl: ^0.19.0
@@ -64,7 +66,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icons/
-    - assets/icons/filled/
+    - assets/icons/filled/white_mode/
+    - assets/icons/filled/dark_mode/
     - assets/icons/outlined/
     - assets/images/
   # An image asset can refer to one or more resolution-specific "variants", see

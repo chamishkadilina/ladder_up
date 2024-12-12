@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MyTextField extends StatelessWidget {
+class MyTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String? hintText;
   final bool obscureText;
@@ -9,38 +9,50 @@ class MyTextField extends StatelessWidget {
   const MyTextField({
     required this.controller,
     required this.hintText,
-    required this.obscureText,
-    required this.keyboardType,
+    this.obscureText = false,
+    this.keyboardType,
     super.key,
   });
 
   @override
+  State<MyTextField> createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscureText;
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
+      controller: widget.controller,
+      obscureText: _obscureText,
+      keyboardType: widget.keyboardType,
       decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.grey),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-          borderRadius: BorderRadius.all(
-            Radius.circular(07),
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.grey.shade400,
-          ),
-          borderRadius: const BorderRadius.all(
-            Radius.circular(07),
-          ),
-        ),
-        fillColor: Colors.white,
-        filled: true,
+        hintText: widget.hintText,
+        hintStyle: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.copyWith(color: Colors.grey),
+        suffixIcon: widget.obscureText
+            ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: _togglePasswordVisibility,
+              )
+            : null,
       ),
     );
   }

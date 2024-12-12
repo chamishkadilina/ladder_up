@@ -40,7 +40,6 @@ class ProjectDetailsPage extends StatelessWidget {
         endDate != null ? dateFormat.format(endDate) : 'N/A';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F2F8),
       appBar: AppBar(
         title: const Text('Project Details'),
         centerTitle: true,
@@ -87,20 +86,21 @@ class ProjectDetailsPage extends StatelessWidget {
           children: [
             // Top section - Project title, dates, and progress
             Card(
+              margin:
+                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 0.0),
               color: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
               child: ListTile(
-                leading:
-                    Text(project.emoji, style: const TextStyle(fontSize: 32)),
+                leading: Text(
+                  project.emoji,
+                  style: const TextStyle(fontSize: 24),
+                ),
                 title: Text(
                   project.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,18 +111,14 @@ class ProjectDetailsPage extends StatelessWidget {
                       children: [
                         Text(
                           '$formattedStartDate - $formattedEndDate',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w300,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge
+                              ?.copyWith(color: Colors.grey),
                         ),
                         Text(
                           '$progress %',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ],
                     ),
@@ -131,16 +127,25 @@ class ProjectDetailsPage extends StatelessWidget {
                       value: totalSubtasks > 0
                           ? completedSubtasks / totalSubtasks
                           : 0, // Avoid division by zero
-                      minHeight: 6,
+                      minHeight: 4,
                       backgroundColor: Colors.grey[300],
                       color: Colors.blueAccent,
                     ),
                     const SizedBox(height: 8),
                   ],
                 ),
+                onTap: () {
+                  // Navigate to Project Details Page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ProjectDetailsPage(project: project),
+                    ),
+                  );
+                },
               ),
             ),
-
             const SizedBox(height: 16),
 
             // Task List Section
@@ -158,12 +163,15 @@ class ProjectDetailsPage extends StatelessWidget {
 
             // incompleted Tasks
             incompleteTasks.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Center(
                       child: Text(
                         'No tasks are currently in progress. Add a new task to get started!',
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: Colors.grey),
                       ),
                     ),
                   )
@@ -175,9 +183,9 @@ class ProjectDetailsPage extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Completed Tasks
-            const Text(
+            Text(
               'Completed',
-              style: TextStyle(fontSize: 20),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
 
@@ -192,12 +200,12 @@ class ProjectDetailsPage extends StatelessWidget {
                             'assets/icons/ic_notasks.png',
                             scale: 2.4,
                           ),
-                          const Text(
+                          Text(
                             'No tasks have been completed yet.',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: Colors.grey),
                           ),
                         ],
                       ),

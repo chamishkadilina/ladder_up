@@ -64,7 +64,6 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade300,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Center(
@@ -84,10 +83,7 @@ class LoginPageState extends State<LoginPage> {
                       _isLogin
                           ? 'Welcome back, you\'ve been missed!'
                           : 'Let\'s create an account for you!',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade700,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -132,9 +128,7 @@ class LoginPageState extends State<LoginPage> {
                           },
                           child: Text(
                             'Forgot Password?',
-                            style: TextStyle(
-                              color: Colors.grey.shade700,
-                            ),
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ),
                       ],
@@ -153,11 +147,10 @@ class LoginPageState extends State<LoginPage> {
                       child: Center(
                         child: Text(
                           _isLogin ? 'Log In' : 'Register',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge
+                              ?.copyWith(color: Colors.white),
                         ),
                       ),
                     ),
@@ -171,9 +164,10 @@ class LoginPageState extends State<LoginPage> {
                       const SizedBox(width: 8),
                       Text(
                         'Or Continue With',
-                        style: TextStyle(
-                          color: Colors.grey.shade700,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: Colors.grey),
                       ),
                       const SizedBox(width: 8),
                       const Expanded(child: Divider(color: Colors.grey)),
@@ -211,15 +205,16 @@ class LoginPageState extends State<LoginPage> {
                         _isLogin
                             ? 'Not a member? '
                             : 'Already have an account? ',
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       GestureDetector(
                         onTap: toggleLoginMode,
                         child: Text(
                           _isLogin ? 'Register now' : 'Login now',
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: Colors.blue),
                         ),
                       ),
                     ],
