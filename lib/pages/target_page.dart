@@ -11,7 +11,10 @@ class TargetPage extends StatelessWidget {
           onPressed: () {},
           icon: const Icon(Icons.arrow_back),
         ),
-        title: const Text('My Target'),
+        title: Text(
+          'My Target',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         centerTitle: true,
         actions: [
           IconButton(

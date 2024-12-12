@@ -45,14 +45,11 @@ class ProjectList extends StatelessWidget {
           child: ListTile(
             leading: Text(
               project.emoji,
-              style: const TextStyle(fontSize: 32),
+              style: const TextStyle(fontSize: 24),
             ),
             title: Text(
               project.name,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,18 +60,14 @@ class ProjectList extends StatelessWidget {
                   children: [
                     Text(
                       '$formattedStartDate - $formattedEndDate',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w300,
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge
+                          ?.copyWith(color: Colors.grey),
                     ),
                     Text(
                       '$progress %',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ],
                 ),
@@ -83,7 +76,7 @@ class ProjectList extends StatelessWidget {
                   value: totalSubtasks > 0
                       ? completedSubtasks / totalSubtasks
                       : 0, // Avoid division by zero
-                  minHeight: 6,
+                  minHeight: 4,
                   backgroundColor: Colors.grey[300],
                   color: Colors.blueAccent,
                 ),

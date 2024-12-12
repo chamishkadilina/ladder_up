@@ -60,7 +60,6 @@ class _SchedulePageState extends State<SchedulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F2F8),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -68,7 +67,10 @@ class _SchedulePageState extends State<SchedulePage> {
           },
           icon: const Icon(Icons.arrow_back),
         ),
-        title: const Text('My Schedule'),
+        title: Text(
+          'My Schedule',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         centerTitle: true,
         actions: [
           IconButton(

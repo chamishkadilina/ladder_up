@@ -44,23 +44,30 @@ class TaskListDetailed extends StatelessWidget {
                     }
                   },
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit_document, color: Colors.black54),
-                          SizedBox(width: 8),
-                          Text('Edit Task'),
+                          const Icon(Icons.edit_document,
+                              color: Colors.black54),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Edit Task',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
                         ],
                       ),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Delete Task'),
+                          const Icon(Icons.delete, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Delete Task',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
                         ],
                       ),
                     ),
@@ -69,6 +76,7 @@ class TaskListDetailed extends StatelessWidget {
                 title: Text(
                   task.title,
                   style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
                     decoration: task.isCompleted
                         ? TextDecoration.lineThrough
                         : TextDecoration.none,

@@ -13,10 +13,10 @@ class EmptyState extends StatelessWidget {
     return Center(
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.grey,
-          fontSize: 16,
-        ),
+        style: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.copyWith(color: Colors.grey),
       ),
     );
   }
