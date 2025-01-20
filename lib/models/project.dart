@@ -38,4 +38,26 @@ class Project {
       'subtasks': subtasks.map((subtask) => subtask.toMap()).toList(),
     };
   }
+
+  factory Project.fromMap(Map<String, dynamic> map) {
+    return Project(
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      userId: map['userId'] ?? '',
+      emoji: map['emoji'] ?? '📁',
+      subtasks: (map['subtasks'] as List<dynamic>?)
+              ?.map((subtaskData) =>
+                  Subtask.fromMap(Map<String, dynamic>.from(subtaskData)))
+              .toList() ??
+          [],
+    );
+  }
+
+  // Add this method for local storage
+  Map<String, dynamic> toLocalMap() {
+    return {
+      'id': id,
+      ...toMap(),
+    };
+  }
 }

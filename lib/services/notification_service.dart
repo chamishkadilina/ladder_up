@@ -70,7 +70,7 @@ class NotificationService {
           'No Tasks Today',
           'You have no tasks scheduled for today.',
           DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day, 21, 05 // 5:00 AM
+              DateTime.now().day, 11, 18 // 5:00 AM
               ));
     } else {
       // Create a detailed task notification with project names
@@ -92,7 +92,7 @@ class NotificationService {
           'Today\'s Tasks',
           'You have ${todayTasks.length} task(s) today:\n$taskMessage',
           DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day, 21, 05 // 5:00 AM
+              DateTime.now().day, 11, 18 // 5:00 AM
               ));
     }
   }

@@ -6,6 +6,7 @@ import 'package:ladder_up/providers/auth_provider.dart';
 import 'package:ladder_up/providers/project_provider.dart';
 import 'package:ladder_up/providers/setting_provider.dart';
 import 'package:ladder_up/services/notification_service.dart';
+import 'package:ladder_up/services/storage_service.dart';
 import 'package:ladder_up/theme/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -14,6 +15,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await NotificationService.init();
+  await StorageService.init(); // Initialize local storage
   tz.initializeTimeZones();
 
   runApp(
