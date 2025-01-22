@@ -4,6 +4,7 @@ import 'package:ladder_up/navigation_bar.dart';
 import 'package:ladder_up/pages/login_or_signin_page.dart';
 import 'package:ladder_up/providers/auth_provider.dart';
 import 'package:ladder_up/providers/project_provider.dart';
+import 'package:ladder_up/providers/setting_provider.dart';
 import 'package:ladder_up/services/notification_service.dart';
 import 'package:ladder_up/services/storage_service.dart';
 import 'package:ladder_up/theme/theme.dart';
@@ -22,6 +23,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ProjectProvider()),
+        ChangeNotifierProvider(create: (context) => SettingsProvider()),
       ],
       child: const MyApp(),
     ),
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // theme
-      themeMode: ThemeMode.system,
+      themeMode: context.watch<SettingsProvider>().themeMode,
       theme: MyAppTheme.lightTheme,
       darkTheme: MyAppTheme.darkTheme,
 

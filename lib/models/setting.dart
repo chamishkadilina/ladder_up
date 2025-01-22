@@ -1,33 +1,27 @@
-import 'package:flutter/material.dart';
+class Settings {
+  final bool isDarkMode;
 
-class AppSettings {
-  String language;
-  bool notificationsEnabled;
-  ThemeMode themeMode;
-
-  AppSettings({
-    this.language = 'en', // default language
-    this.notificationsEnabled = true,
-    this.themeMode = ThemeMode.system,
+  const Settings({
+    this.isDarkMode = false,
   });
 
-  // Add method to convert to and from JSON for local storage
-  factory AppSettings.fromJson(Map<String, dynamic> json) {
-    return AppSettings(
-      language: json['language'] ?? 'en',
-      notificationsEnabled: json['notifications'] ?? true,
-      themeMode: ThemeMode.values.firstWhere(
-        (mode) => mode.toString() == json['themeMode'],
-        orElse: () => ThemeMode.system,
-      ),
+  Settings copyWith({
+    bool? isDarkMode,
+  }) {
+    return Settings(
+      isDarkMode: isDarkMode ?? this.isDarkMode,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'language': language,
-      'notifications': notificationsEnabled,
-      'themeMode': themeMode.toString(),
+      'isDarkMode': isDarkMode,
     };
+  }
+
+  factory Settings.fromJson(Map<String, dynamic> json) {
+    return Settings(
+      isDarkMode: json['isDarkMode'] ?? false,
+    );
   }
 }
