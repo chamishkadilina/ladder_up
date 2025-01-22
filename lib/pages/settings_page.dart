@@ -1,8 +1,10 @@
+// settings_page.dart
 import 'package:flutter/material.dart';
-import 'package:ladder_up/providers/auth_provider.dart';
-import 'package:ladder_up/providers/setting_provider.dart';
+import 'package:ladder_up/services/notification_service.dart';
+import 'package:ladder_up/services/notification_settings_service.dart';
 import 'package:ladder_up/widgets/premium_tile.dart';
 import 'package:provider/provider.dart';
+import 'package:ladder_up/providers/project_provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -12,282 +14,163 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  TimeOfDay _reminderTime = const TimeOfDay(hour: 8, minute: 0);
+  bool _notificationsEnabled = true;
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<SettingsProvider>(context, listen: false).loadSettings();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final savedTime = await NotificationSettingsService.getReminderTime();
+    final notificationsEnabled =
+        await NotificationSettingsService.getNotificationsEnabled();
+
+    setState(() {
+      if (savedTime != null) {
+        _reminderTime = savedTime;
+      }
+      _notificationsEnabled = notificationsEnabled;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _toggleNotifications(bool value) async {
+    setState(() {
+      _notificationsEnabled = value;
+    });
+
+    await NotificationSettingsService.setNotificationsEnabled(value);
+
+    // Reschedule or cancel notifications based on new setting
+    final projectProvider =
+        Provider.of<ProjectProvider>(context, listen: false);
+    if (value) {
+      await projectProvider.scheduleTaskNotifications();
+    } else {
+      await NotificationService.cancelAllNotifications();
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text(value ? 'Notifications enabled' : 'Notifications disabled'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  Future<void> _selectTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime,
+    );
+
+    if (picked != null && picked != _reminderTime) {
+      setState(() {
+        _reminderTime = picked;
+      });
+
+      // Save the new time
+      await NotificationSettingsService.setReminderTime(picked);
+
+      // Reschedule notifications with new time
+      if (_notificationsEnabled) {
+        final projectProvider =
+            Provider.of<ProjectProvider>(context, listen: false);
+        await projectProvider.scheduleTaskNotifications();
+      }
+
+      // Show confirmation
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Reminder time updated successfully'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final settingsProvider = Provider.of<SettingsProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context);
-
-    return SafeArea(
-      child: Scaffold(
-        // backgroundColor: const Color.fromARGB(255, 145, 145, 145),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // User Name container
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.4),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blue.shade100.withOpacity(0.4),
-                        blurRadius: 20,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.blue.shade100.withOpacity(0.5),
-                                width: 3,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blue.shade100.withOpacity(0.3),
-                                  blurRadius: 15,
-                                )
-                              ],
-                            ),
-                            child: CircleAvatar(
-                              radius: 40,
-                              backgroundImage: authProvider.user?.photoURL !=
-                                      null
-                                  ? NetworkImage(authProvider.user!.photoURL!)
-                                  : null,
-                              backgroundColor: Colors.white.withOpacity(0.4),
-                              child: authProvider.user?.photoURL == null
-                                  ? Icon(Icons.person,
-                                      size: 50, color: Colors.blue.shade300)
-                                  : null,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              authProvider.user?.displayName ?? 'User',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.blue.shade900,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            Text(
-                              authProvider.user?.email ?? 'user@example.com',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.blue.shade700,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Premium Upgrade Tile
-                const PremiumTile(),
-                const SizedBox(height: 16),
-
-                // Settings Sections with Modern Card Design
-                _buildSettingsSection(
-                  context,
-                  title: 'Account Preferences',
-                  children: [
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons.account_circle,
-                      titleWidget: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Account',
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            'Free User',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF754BE5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      onTap: null, // Go to Upgrade plane page
-                    ),
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons.notifications_outlined,
-                      title: 'Notifications',
-                      trailing: Switch(
-                        value: settingsProvider.settings.notificationsEnabled,
-                        onChanged: (bool value) {
-                          settingsProvider.toggleNotifications(value);
-                        },
-                        activeColor: const Color(0xFF009DFF),
-                      ),
-                    ),
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons.language,
-                      titleWidget: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Language',
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            'en',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF754BE5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      onTap: () => _showLanguageDialog(context),
-                    ),
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons.logout,
-                      title: 'Log out',
-                      onTap: () => settingsProvider.shareApp(),
-                    ),
-                  ],
-                ),
-
-                _buildSettingsSection(
-                  context,
-                  title: 'App Customization',
-                  children: [
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons.color_lens_outlined,
-                      titleWidget: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Theme',
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            'System',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF754BE5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      subtitle: (ThemeMode mode) {
-                        // ... (same as original implementation)
-                      }(settingsProvider.settings.themeMode),
-                      onTap: () => _showThemeDialog(context),
-                    ),
-                  ],
-                ),
-
-                _buildSettingsSection(
-                  context,
-                  title: 'About App',
-                  children: [
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons.star_border,
-                      title: 'Rate Us',
-                      onTap: () => settingsProvider.rateApp(),
-                    ),
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons.shield_outlined,
-                      title: 'Privacy Policy',
-                      onTap: () => settingsProvider.openPrivacyPolicy(),
-                    ),
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons.share_outlined,
-                      title: 'Share with Friends',
-                      onTap: () => settingsProvider.shareApp(),
-                    ),
-                    _buildSettingsTile(
-                      context,
-                      icon: Icons
-                          .info_outline, // Using an "info" icon for app version
-                      titleWidget: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'App version',
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            '1.0.0',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      onTap: null, // Disable tap action for app version
-                    ),
-                  ],
-                ),
-              ],
-            ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FE),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            color: Color(0xFF1E1E1E),
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Premium tile
+                  const PremiumTile(),
+
+                  // Notification Settings
+                  _buildSettingsGroup(
+                    'Notifications',
+                    [
+                      _buildSettingsTile(
+                        icon: Icons.notifications_outlined,
+                        title: 'Push Notifications',
+                        subtitle: 'Enable or disable alerts',
+                        trailing: Switch(
+                          value: _notificationsEnabled,
+                          onChanged: _toggleNotifications,
+                          activeColor: const Color(0xFF4B6CF5),
+                        ),
+                      ),
+                      if (_notificationsEnabled)
+                        _buildSettingsTile(
+                          icon: Icons.access_time,
+                          title: 'Tasks Reminder At',
+                          subtitle: 'Set time for daily reminders',
+                          onTap: _selectTime,
+                          trailing: Text(
+                            _reminderTime.format(context),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF4B6CF5),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
-  // Helper method to create settings sections
-  Widget _buildSettingsSection(
-    BuildContext context, {
-    required String title,
-    required List<Widget> children,
-  }) {
+  Widget _buildSettingsGroup(String title, List<Widget> tiles) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade200,
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
-            spreadRadius: 2,
-          )
+            offset: const Offset(0, 5),
+          ),
         ],
       ),
       child: Column(
@@ -298,64 +181,55 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Text(
               title,
               style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Colors.black87,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E1E1E),
               ),
             ),
           ),
-          ...children,
+          ...tiles,
         ],
       ),
     );
   }
 
-  // Helper method to create settings tiles
-  Widget _buildSettingsTile(
-    BuildContext context, {
+  Widget _buildSettingsTile({
     required IconData icon,
-    String? title, // Optional, if titleWidget is used
-    Widget? titleWidget, // For custom titles
-    String? subtitle,
-    VoidCallback? onTap,
+    required String title,
+    required String subtitle,
     Widget? trailing,
+    void Function()? onTap,
   }) {
     return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF0F4F8),
-          borderRadius: BorderRadius.circular(10),
+          color: const Color(0xFFF0F3FE),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(
           icon,
-          color: const Color(0xFF754BE5),
+          color: const Color(0xFF4B6CF5),
         ),
       ),
-      title: titleWidget ??
-          (title != null
-              ? Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w400),
-                )
-              : null),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: const TextStyle(fontWeight: FontWeight.w400),
-            )
-          : null,
-      trailing: trailing ?? const Icon(Icons.chevron_right),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF1E1E1E),
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.grey[600],
+        ),
+      ),
+      trailing: trailing,
       onTap: onTap,
     );
-  }
-
-  // Language and Theme dialogs remain the same as in the original implementation
-  void _showLanguageDialog(BuildContext context) {
-    // ... (same as original implementation)
-  }
-
-  void _showThemeDialog(BuildContext context) {
-    // ... (same as original implementation)
   }
 }
