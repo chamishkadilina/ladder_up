@@ -4,7 +4,6 @@ import 'package:ladder_up/navigation_bar.dart';
 import 'package:ladder_up/pages/login_or_signin_page.dart';
 import 'package:ladder_up/providers/auth_provider.dart';
 import 'package:ladder_up/providers/project_provider.dart';
-import 'package:ladder_up/providers/setting_provider.dart';
 import 'package:ladder_up/services/notification_service.dart';
 import 'package:ladder_up/services/storage_service.dart';
 import 'package:ladder_up/theme/theme.dart';
@@ -23,7 +22,6 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ProjectProvider()),
-        ChangeNotifierProvider(create: (context) => SettingsProvider()),
       ],
       child: const MyApp(),
     ),
@@ -39,28 +37,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SettingsProvider>(
-      builder: (context, settingsProvider, child) {
-        return MaterialApp(
-          // Set language
-          locale: Locale(settingsProvider.settings.language),
+    return MaterialApp(
+      // theme
+      themeMode: ThemeMode.system,
+      theme: MyAppTheme.lightTheme,
+      darkTheme: MyAppTheme.darkTheme,
 
-          // theme
-          themeMode: ThemeMode.system,
-          theme: MyAppTheme.lightTheme,
-          darkTheme: MyAppTheme.darkTheme,
-
-          title: 'Ladder Up',
-          home: Consumer<AuthProvider>(
-            builder: (context, authProvider, child) {
-              return authProvider.isAuthenticated
-                  ? const MyNavigationBar()
-                  : const LoginPage();
-            },
-          ),
-          debugShowCheckedModeBanner: false,
-        );
-      },
+      title: 'Ladder Up',
+      home: Consumer<AuthProvider>(
+        builder: (context, authProvider, child) {
+          return authProvider.isAuthenticated
+              ? const MyNavigationBar()
+              : const LoginPage();
+        },
+      ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
