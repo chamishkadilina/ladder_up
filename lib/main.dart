@@ -14,7 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await NotificationService.init();
-  await StorageService.init(); // Initialize local storage
+  await StorageService.init();
   tz.initializeTimeZones();
 
   runApp(

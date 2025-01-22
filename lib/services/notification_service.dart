@@ -18,6 +18,20 @@ class NotificationService {
   }
 
   static Future<void> init() async {
+    // Initialize notification channel with default sound
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'reminder_channel',
+      'Reminder Channel',
+      importance: Importance.high,
+      playSound: true,
+    );
+
+    // Create the channel
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("@mipmap/ic_launcher");
 
@@ -44,17 +58,41 @@ class NotificationService {
 
   static Future<void> scheduleNotification(
       int id, String title, String body, DateTime scheduledTime) async {
+    // Get the selected sound
+    final String soundName =
+        await NotificationSettingsService.getNotificationSound();
+    final String actualSound =
+        NotificationSettingsService.notificationSounds[soundName] ??
+            'deduction_588';
+
+    // Create a custom channel for this notification with the selected sound
+    final AndroidNotificationChannel customChannel = AndroidNotificationChannel(
+      'reminder_channel_$actualSound', // Unique channel ID for each sound
+      'Reminder Channel',
+      sound: RawResourceAndroidNotificationSound(actualSound),
+      playSound: true,
+      importance: Importance.high,
+    );
+
+    // Create the channel
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(customChannel);
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
       title,
       body,
       tz.TZDateTime.from(scheduledTime, tz.local),
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
-          'reminder_channel',
-          'Reminder Channel',
+          customChannel.id,
+          customChannel.name,
+          channelDescription: 'Notification channel for reminders',
           importance: Importance.high,
           priority: Priority.high,
+          playSound: true,
         ),
       ),
       uiLocalNotificationDateInterpretation:
