@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ladder_up/pages/login_or_signin_page.dart';
+import 'package:ladder_up/providers/auth_provider.dart';
+import 'package:ladder_up/providers/setting_provider.dart';
+import 'package:ladder_up/services/app_info_service.dart';
 import 'package:ladder_up/services/notification_service.dart';
 import 'package:ladder_up/services/notification_settings_service.dart';
+import 'package:ladder_up/services/share_service.dart';
+import 'package:ladder_up/widgets/dialogs/confirm_dialog.dart';
 import 'package:ladder_up/widgets/premium_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:ladder_up/providers/project_provider.dart';
@@ -20,10 +26,46 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  // dark mode
+  bool isDarkMode = false;
+
   TimeOfDay _reminderTime = const TimeOfDay(hour: 8, minute: 0);
   bool _notificationsEnabled = true;
   bool _isLoading = true;
   String _selectedSound = 'default';
+
+  void _handleSignOut() async {
+    showDialog(
+      context: context,
+      builder: (context) => ConfirmDialog(
+        title: 'Sign Out',
+        message: 'Are you sure you want to sign out?',
+        confirmText: 'Sign Out',
+        onConfirm: () async {
+          try {
+            await context.read<AuthProvider>().signOut();
+
+            if (mounted) {
+              // Clear navigation stack and go to login page
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+                (route) => false,
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Failed to sign out. Please try again.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -251,15 +293,19 @@ class _SettingsPageState extends State<SettingsPage> {
                     'Preferences',
                     [
                       _buildSettingsTile(
-                        icon: Icons.palette_outlined,
+                        icon: context.watch<SettingsProvider>().isDarkMode
+                            ? Icons.dark_mode_outlined
+                            : Icons.wb_sunny_outlined,
                         title: 'Appearance',
-                        subtitle: 'Dark mode and theme settings',
-                        onTap: () {},
-                      ),
-                      _buildSettingsTile(
-                        icon: Icons.language,
-                        title: 'Language',
-                        subtitle: 'English (US)',
+                        subtitle: context.watch<SettingsProvider>().isDarkMode
+                            ? 'Dark mode'
+                            : 'Light mode',
+                        trailing: Switch(
+                          value: context.watch<SettingsProvider>().isDarkMode,
+                          onChanged: (value) {
+                            context.read<SettingsProvider>().toggleTheme();
+                          },
+                        ),
                         onTap: () {},
                       ),
                     ],
@@ -273,35 +319,79 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icons.share_outlined,
                         title: 'Share App',
                         subtitle: 'Invite friends to join',
-                        onTap: () {},
+                        onTap: () async {
+                          try {
+                            await ShareService.shareApp();
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Failed to share app. Please try again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
                       ),
                       _buildSettingsTile(
                         icon: Icons.star_outline,
                         title: 'Rate Us',
                         subtitle: 'Share your feedback',
-                        onTap: () {},
+                        onTap: () async {
+                          try {
+                            await ShareService.launchStoreForRating();
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Failed to open store. Please try again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
                       ),
                       _buildSettingsTile(
                         icon: Icons.privacy_tip_outlined,
                         title: 'Privacy Policy',
                         subtitle: 'Read our privacy policy',
-                        onTap: () {},
+                        onTap: () async {
+                          try {
+                            await ShareService.launchPrivacyPolicy();
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Failed to open privacy policy. Please try again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
                       ),
-                      _buildSettingsTile(
-                        icon: Icons.info_outline,
-                        title: 'App Version',
-                        subtitle: 'Version 1.0.0',
-                        trailing: const SizedBox.shrink(),
+                      FutureBuilder<String>(
+                        future: AppInfoService.getAppVersion(),
+                        builder: (context, snapshot) {
+                          return _buildSettingsTile(
+                            icon: Icons.info_outline,
+                            title: 'App Version',
+                            subtitle: snapshot.data ?? 'Loading...',
+                            trailing: const SizedBox.shrink(),
+                          );
+                        },
                       ),
                       _buildSettingsTile(
                         icon: Icons.logout_outlined,
                         title: 'Sign Out',
                         subtitle: 'Sign out from your account',
-                        onTap: () {
-                          // Add your sign out logic here
-                        },
-                        textColor: Colors
-                            .red, // Add this parameter to your _buildSettingsTile
+                        onTap: _handleSignOut,
+                        textColor: Colors.red,
                       ),
                     ],
                   ),
