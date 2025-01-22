@@ -1,10 +1,16 @@
-// settings_page.dart
 import 'package:flutter/material.dart';
 import 'package:ladder_up/services/notification_service.dart';
 import 'package:ladder_up/services/notification_settings_service.dart';
 import 'package:ladder_up/widgets/premium_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:ladder_up/providers/project_provider.dart';
+
+// Add this extension for string capitalization
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
+}
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,6 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
   TimeOfDay _reminderTime = const TimeOfDay(hour: 8, minute: 0);
   bool _notificationsEnabled = true;
   bool _isLoading = true;
+  String _selectedSound = 'default';
 
   @override
   void initState() {
@@ -28,12 +35,14 @@ class _SettingsPageState extends State<SettingsPage> {
     final savedTime = await NotificationSettingsService.getReminderTime();
     final notificationsEnabled =
         await NotificationSettingsService.getNotificationsEnabled();
+    final savedSound = await NotificationSettingsService.getNotificationSound();
 
     setState(() {
       if (savedTime != null) {
         _reminderTime = savedTime;
       }
       _notificationsEnabled = notificationsEnabled;
+      _selectedSound = savedSound;
       _isLoading = false;
     });
   }
@@ -98,6 +107,74 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  Future<void> _selectNotificationSound() async {
+    final String? result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Notification Sound'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: NotificationSettingsService.notificationSounds.keys
+                  .map((String sound) {
+                return RadioListTile<String>(
+                  title: Text(sound.capitalize()),
+                  value: sound,
+                  groupValue: _selectedSound,
+                  activeColor: const Color(0xFF4B6CF5),
+                  onChanged: (String? value) {
+                    Navigator.pop(context, value);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Color(0xFF4B6CF5)),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, _selectedSound),
+              child: const Text(
+                'Confirm',
+                style: TextStyle(color: Color(0xFF4B6CF5)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null && result != _selectedSound) {
+      setState(() {
+        _selectedSound = result;
+      });
+
+      await NotificationSettingsService.setNotificationSound(result);
+
+      // Reschedule notifications with new sound
+      if (_notificationsEnabled) {
+        final projectProvider =
+            Provider.of<ProjectProvider>(context, listen: false);
+        await projectProvider.scheduleTaskNotifications();
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Notification sound updated'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,21 +213,96 @@ class _SettingsPageState extends State<SettingsPage> {
                           activeColor: const Color(0xFF4B6CF5),
                         ),
                       ),
-                      if (_notificationsEnabled)
-                        _buildSettingsTile(
-                          icon: Icons.access_time,
-                          title: 'Tasks Reminder At',
-                          subtitle: 'Set time for daily reminders',
-                          onTap: _selectTime,
-                          trailing: Text(
-                            _reminderTime.format(context),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF4B6CF5),
-                            ),
+                      _buildSettingsTile(
+                        icon: Icons.access_time,
+                        title: 'Tasks Reminder At',
+                        subtitle: 'Set time for daily reminders',
+                        onTap: _notificationsEnabled ? _selectTime : null,
+                        trailing: Text(
+                          _reminderTime.format(context),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: _notificationsEnabled
+                                ? const Color(0xFF4B6CF5)
+                                : Colors.grey,
                           ),
                         ),
+                        disabled: !_notificationsEnabled,
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.music_note_outlined,
+                        title: 'Task Reminder Tone',
+                        subtitle: _selectedSound.capitalize(),
+                        onTap: _notificationsEnabled
+                            ? _selectNotificationSound
+                            : null,
+                        trailing: const Icon(
+                          Icons.chevron_right,
+                          color: Color(0xFF4B6CF5),
+                        ),
+                        disabled: !_notificationsEnabled,
+                      ),
+                    ],
+                  ),
+
+                  // Preferences
+                  _buildSettingsGroup(
+                    'Preferences',
+                    [
+                      _buildSettingsTile(
+                        icon: Icons.palette_outlined,
+                        title: 'Appearance',
+                        subtitle: 'Dark mode and theme settings',
+                        onTap: () {},
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.language,
+                        title: 'Language',
+                        subtitle: 'English (US)',
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+
+                  // About & Support
+                  _buildSettingsGroup(
+                    'About & Support',
+                    [
+                      _buildSettingsTile(
+                        icon: Icons.share_outlined,
+                        title: 'Share App',
+                        subtitle: 'Invite friends to join',
+                        onTap: () {},
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.star_outline,
+                        title: 'Rate Us',
+                        subtitle: 'Share your feedback',
+                        onTap: () {},
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.privacy_tip_outlined,
+                        title: 'Privacy Policy',
+                        subtitle: 'Read our privacy policy',
+                        onTap: () {},
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.info_outline,
+                        title: 'App Version',
+                        subtitle: 'Version 1.0.0',
+                        trailing: const SizedBox.shrink(),
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.logout_outlined,
+                        title: 'Sign Out',
+                        subtitle: 'Sign out from your account',
+                        onTap: () {
+                          // Add your sign out logic here
+                        },
+                        textColor: Colors
+                            .red, // Add this parameter to your _buildSettingsTile
+                      ),
                     ],
                   ),
                 ],
@@ -161,7 +313,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget _buildSettingsGroup(String title, List<Widget> tiles) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -177,12 +329,12 @@ class _SettingsPageState extends State<SettingsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.only(top: 16, left: 16),
             child: Text(
               title,
               style: const TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
                 color: Color(0xFF1E1E1E),
               ),
             ),
@@ -199,37 +351,49 @@ class _SettingsPageState extends State<SettingsPage> {
     required String subtitle,
     Widget? trailing,
     void Function()? onTap,
+    bool disabled = false,
+    Color? textColor,
   }) {
+    final Color defaultColor = disabled ? Colors.grey : const Color(0xFF1E1E1E);
+    final Color titleColor = textColor ?? defaultColor;
+
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF0F3FE),
+          color: disabled ? Colors.grey[200] : const Color(0xFFF0F3FE),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(
           icon,
-          color: const Color(0xFF4B6CF5),
+          color:
+              textColor ?? (disabled ? Colors.grey : const Color(0xFF4B6CF5)),
         ),
       ),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF1E1E1E),
+          fontWeight: FontWeight.w500,
+          color: titleColor,
         ),
       ),
       subtitle: Text(
         subtitle,
         style: TextStyle(
           fontSize: 14,
-          color: Colors.grey[600],
+          color: disabled ? Colors.grey[400] : Colors.grey[600],
         ),
       ),
-      trailing: trailing,
-      onTap: onTap,
+      trailing: trailing ??
+          (onTap != null
+              ? const Icon(
+                  Icons.chevron_right,
+                  color: Color(0xFF4B6CF5),
+                )
+              : null),
+      onTap: disabled ? null : onTap,
     );
   }
 }
