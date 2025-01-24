@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ladder_up/navigation_bar.dart';
 import 'package:ladder_up/pages/login_or_signin_page.dart';
 import 'package:ladder_up/providers/auth_provider.dart';
 import 'package:ladder_up/providers/setting_provider.dart';
@@ -224,6 +225,19 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return const MyNavigationBar();
+                },
+              ),
+            );
+          },
+        ),
         title: const Text(
           'Settings',
           style: TextStyle(
