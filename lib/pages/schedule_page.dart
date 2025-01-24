@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ladder_up/navigation_bar.dart';
 import 'package:ladder_up/widgets/dialogs/add_task_with_project_selection_dialog.dart';
 import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:ladder_up/widgets/task_list_regular.dart';
@@ -64,14 +63,7 @@ class _SchedulePageState extends State<SchedulePage> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return const MyNavigationBar();
-                },
-              ),
-            );
+            Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back),
         ),

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.progress_tracker"
+    namespace = "com.example.ladder_up"
     compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
