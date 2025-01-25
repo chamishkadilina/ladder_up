@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cached_network_image: ^3.4.1
   cloud_firestore: ^5.5.0
   connectivity_plus: ^6.1.2
   cupertino_icons: ^1.0.8
@@ -77,6 +78,7 @@ flutter:
     - assets/icons/filled/white_mode/
     - assets/icons/filled/dark_mode/
     - assets/icons/outlined/
+    - assets/wallpapers/
 
 flutter_launcher_icons:
   android: "my_progress"

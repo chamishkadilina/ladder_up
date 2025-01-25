@@ -6,6 +6,7 @@ import 'package:ladder_up/services/app_info_service.dart';
 import 'package:ladder_up/services/notification_service.dart';
 import 'package:ladder_up/services/notification_settings_service.dart';
 import 'package:ladder_up/services/share_service.dart';
+import 'package:ladder_up/services/wallpaper_service.dart';
 import 'package:ladder_up/widgets/dialogs/confirm_dialog.dart';
 import 'package:ladder_up/widgets/premium_tile.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +72,78 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
     _loadSettings();
+  }
+
+  void _showWallpaperSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Wallpaper'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: WallpaperService.availableWallpapers.length,
+              itemBuilder: (context, index) {
+                final wallpaperPath =
+                    WallpaperService.availableWallpapers[index];
+                final isSelected = wallpaperPath ==
+                    context.watch<SettingsProvider>().selectedWallpaper;
+
+                return GestureDetector(
+                  onTap: () {
+                    context
+                        .read<SettingsProvider>()
+                        .setWallpaper(wallpaperPath);
+                    Navigator.of(context).pop();
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: DecorationImage(
+                            image: AssetImage(wallpaperPath),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _loadSettings() async {
@@ -307,6 +380,27 @@ class _SettingsPageState extends State<SettingsPage> {
                           },
                         ),
                         onTap: () {},
+                      ),
+                      _buildSettingsTile(
+                        icon: Icons.wallpaper_outlined,
+                        title: 'Wallpaper',
+                        subtitle: 'Choose your home background',
+                        onTap: _showWallpaperSelectionDialog,
+                        trailing: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            image: DecorationImage(
+                              image: AssetImage(
+                                context
+                                    .watch<SettingsProvider>()
+                                    .selectedWallpaper!,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
