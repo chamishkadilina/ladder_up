@@ -1,5 +1,4 @@
 // notification_settings_service.dart
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,7 +12,7 @@ class NotificationSettingsService {
     'default': 'deduction_588',
     'bell': 'joyous_chime',
     'chime': 'message_ringtone_magic',
-    'welpanta': 'welpanta'
+    'song': 'welpanta'
   };
 
   // Get the stored reminder time
