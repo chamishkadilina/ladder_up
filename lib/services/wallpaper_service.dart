@@ -15,6 +15,8 @@ class WallpaperService {
     'assets/wallpapers/wallpaper8.jpg',
     'assets/wallpapers/wallpaper9.jpg',
     'assets/wallpapers/wallpaper10.jpg',
+    'assets/wallpapers/wallpaper11.jpg',
+    'assets/wallpapers/wallpaper12.jpg',
   ];
 
   // Get the currently selected wallpaper

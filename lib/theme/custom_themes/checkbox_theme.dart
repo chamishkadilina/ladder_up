@@ -5,9 +5,7 @@ class MyCheckBoxtheme {
 
   /// Light Theme
   static CheckboxThemeData lightCheckBoxTheme = CheckboxThemeData(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(4),
-    ),
+    shape: const CircleBorder(),
     checkColor: WidgetStateProperty.resolveWith(
       (states) {
         if (states.contains(WidgetState.selected)) {
@@ -30,9 +28,7 @@ class MyCheckBoxtheme {
 
   /// Dark Theme
   static CheckboxThemeData darkCheckBoxTheme = CheckboxThemeData(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(4),
-    ),
+    shape: const CircleBorder(),
     checkColor: WidgetStateProperty.resolveWith(
       (states) {
         if (states.contains(WidgetState.selected)) {

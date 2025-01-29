@@ -36,15 +36,15 @@ class MyNavigationBarTheme {
   /// Dark Theme Navigation Bar
   static const BottomNavigationBarThemeData darkNavigationBarTheme =
       BottomNavigationBarThemeData(
-    backgroundColor: Color(0xFF1E1E1E),
-    selectedItemColor: Colors.white,
-    unselectedItemColor: Color(0xFF757575),
+    backgroundColor: Color(0xFF151515),
+    selectedItemColor: Color(0xFF009DFF),
+    unselectedItemColor: Color(0xFFA0A1A1),
     showSelectedLabels: true,
     showUnselectedLabels: true,
     type: BottomNavigationBarType.fixed,
     elevation: 8.0,
     selectedIconTheme: IconThemeData(
-      color: Colors.white,
+      color: Color(0xFF009DFF),
       size: 24,
     ),
     unselectedIconTheme: IconThemeData(

@@ -31,9 +31,10 @@ class TaskListDetailed extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Container(
-              color: Colors.white,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF151515)
+                  : Colors.white,
               child: ListTile(
-                contentPadding: const EdgeInsets.all(0),
                 leading: PopupMenuButton<String>(
                   onSelected: (value) {
                     if (value == 'edit') {
@@ -80,7 +81,11 @@ class TaskListDetailed extends StatelessWidget {
                     decoration: task.isCompleted
                         ? TextDecoration.lineThrough
                         : TextDecoration.none,
-                    color: task.isCompleted ? Colors.grey : Colors.black,
+                    color: task.isCompleted
+                        ? Colors.grey
+                        : Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : const Color(0xFF151515),
                   ),
                 ),
                 subtitle: task.taskdateTime != null

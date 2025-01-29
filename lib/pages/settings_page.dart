@@ -7,6 +7,7 @@ import 'package:ladder_up/services/app_info_service.dart';
 import 'package:ladder_up/services/notification_service.dart';
 import 'package:ladder_up/services/notification_settings_service.dart';
 import 'package:ladder_up/services/share_service.dart';
+import 'package:ladder_up/theme/custom_themes/text_theme.dart';
 import 'package:ladder_up/widgets/dialogs/confirm_dialog.dart';
 import 'package:ladder_up/widgets/premium_tile.dart';
 import 'package:provider/provider.dart';
@@ -229,17 +230,14 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Settings',
-          style: TextStyle(
-            color: Color(0xFF1E1E1E),
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).brightness == Brightness.dark
+              ? MyTextTheme.darkTextTheme.headlineLarge
+              : MyTextTheme.lightTextTheme.headlineLarge,
         ),
       ),
       body: _isLoading
@@ -276,7 +274,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             fontWeight: FontWeight.bold,
                             color: _notificationsEnabled
                                 ? const Color(0xFF4B6CF5)
-                                : Colors.grey,
+                                : Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black87,
                           ),
                         ),
                         disabled: !_notificationsEnabled,
@@ -288,10 +289,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         onTap: _notificationsEnabled
                             ? _selectNotificationSound
                             : null,
-                        trailing: const Icon(
-                          Icons.chevron_right,
-                          color: Color(0xFF4B6CF5),
-                        ),
                         disabled: !_notificationsEnabled,
                       ),
                     ],
@@ -435,7 +432,9 @@ class _SettingsPageState extends State<SettingsPage> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.black87
+            : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -452,11 +451,9 @@ class _SettingsPageState extends State<SettingsPage> {
             padding: const EdgeInsets.only(top: 16, left: 16),
             child: Text(
               title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF1E1E1E),
-              ),
+              style: Theme.of(context).brightness == Brightness.dark
+                  ? MyTextTheme.darkTextTheme.titleLarge
+                  : MyTextTheme.lightTextTheme.titleLarge,
             ),
           ),
           ...tiles,
@@ -474,15 +471,16 @@ class _SettingsPageState extends State<SettingsPage> {
     bool disabled = false,
     Color? textColor,
   }) {
-    final Color defaultColor = disabled ? Colors.grey : const Color(0xFF1E1E1E);
-    final Color titleColor = textColor ?? defaultColor;
-
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: disabled ? Colors.grey[200] : const Color(0xFFF0F3FE),
+          color: disabled
+              ? Colors.black87
+              : Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black87
+                  : Colors.grey[200],
           borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(
@@ -493,11 +491,9 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       title: Text(
         title,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: titleColor,
-        ),
+        style: Theme.of(context).brightness == Brightness.dark
+            ? MyTextTheme.darkTextTheme.bodyMedium
+            : MyTextTheme.lightTextTheme.bodyMedium,
       ),
       subtitle: Text(
         subtitle,
@@ -508,9 +504,11 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       trailing: trailing ??
           (onTap != null
-              ? const Icon(
+              ? Icon(
                   Icons.chevron_right,
-                  color: Color(0xFF4B6CF5),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : const Color(0xFF4B6CF5),
                 )
               : null),
       onTap: disabled ? null : onTap,

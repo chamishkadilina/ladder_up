@@ -35,20 +35,16 @@ class _HomePageState extends State<HomePage> {
     final todayTasks = projectProvider.getTasksForToday();
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: settingsProvider.selectedWallpaper != null
-              ? DecorationImage(
-                  image: AssetImage(settingsProvider.selectedWallpaper!),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withValues(alpha: 0.3),
-                    BlendMode.darken,
-                  ),
-                )
-              : null,
-        ),
-        child: SafeArea(
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            image: settingsProvider.selectedWallpaper != null
+                ? DecorationImage(
+                    image: AssetImage(settingsProvider.selectedWallpaper!),
+                    fit: BoxFit.cover,
+                  )
+                : null,
+          ),
           child: Padding(
             padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
             child: Column(
@@ -71,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                         )
                       : ProjectList(projectProvider: projectProvider),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 const SectionHeader(
                   title: "Today's task",
                   showButton: false,

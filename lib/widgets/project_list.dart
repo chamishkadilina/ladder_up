@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ladder_up/pages/project_details_page.dart';
 import 'package:ladder_up/providers/project_provider.dart';
+import 'package:ladder_up/theme/custom_themes/text_theme.dart';
 
 class ProjectList extends StatelessWidget {
   const ProjectList({
@@ -36,8 +37,10 @@ class ProjectList extends StatelessWidget {
             endDate != null ? dateFormat.format(endDate) : 'N/A';
 
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 0.0),
-          color: Colors.white,
+          margin: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 0.0),
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF151515)
+              : Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -45,11 +48,15 @@ class ProjectList extends StatelessWidget {
           child: ListTile(
             leading: Text(
               project.emoji,
-              style: const TextStyle(fontSize: 24),
+              style: Theme.of(context).brightness == Brightness.dark
+                  ? MyTextTheme.darkTextTheme.headlineLarge
+                  : MyTextTheme.lightTextTheme.headlineLarge,
             ),
             title: Text(
               project.name,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: Theme.of(context).brightness == Brightness.dark
+                  ? MyTextTheme.darkTextTheme.titleLarge
+                  : MyTextTheme.lightTextTheme.titleLarge,
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,14 +67,15 @@ class ProjectList extends StatelessWidget {
                   children: [
                     Text(
                       '$formattedStartDate - $formattedEndDate',
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelLarge
-                          ?.copyWith(color: Colors.grey),
+                      style: Theme.of(context).brightness == Brightness.dark
+                          ? MyTextTheme.darkTextTheme.labelMedium
+                          : MyTextTheme.lightTextTheme.labelMedium,
                     ),
                     Text(
                       '$progress %',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: Theme.of(context).brightness == Brightness.dark
+                          ? MyTextTheme.darkTextTheme.titleLarge
+                          : MyTextTheme.lightTextTheme.titleLarge,
                     ),
                   ],
                 ),
@@ -76,8 +84,11 @@ class ProjectList extends StatelessWidget {
                   value: totalSubtasks > 0
                       ? completedSubtasks / totalSubtasks
                       : 0, // Avoid division by zero
-                  minHeight: 4,
-                  backgroundColor: Colors.grey[300],
+                  minHeight: 6,
+                  backgroundColor:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black
+                          : Colors.grey.shade200,
                   color: Colors.blueAccent,
                 ),
                 const SizedBox(height: 8),
