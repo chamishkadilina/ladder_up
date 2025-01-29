@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ladder_up/navigation_bar.dart';
+import 'package:ladder_up/theme/custom_themes/calendar_theme.dart';
 import 'package:ladder_up/widgets/dialogs/add_task_with_project_selection_dialog.dart';
 import 'package:ladder_up/widgets/show_custom_snack_bar.dart';
 import 'package:ladder_up/widgets/task_list_regular.dart';
@@ -17,7 +19,7 @@ class SchedulePage extends StatefulWidget {
 }
 
 class _SchedulePageState extends State<SchedulePage> {
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
@@ -63,7 +65,11 @@ class _SchedulePageState extends State<SchedulePage> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) {
+                return const MyNavigationBar();
+              },
+            ));
           },
           icon: const Icon(Icons.arrow_back),
         ),
@@ -90,49 +96,31 @@ class _SchedulePageState extends State<SchedulePage> {
               children: [
                 // Table calendar view
                 Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  color: Colors.white,
+                  padding: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    image: const DecorationImage(
+                      image: AssetImage(
+                        'assets/images/calendar_background.jpg',
+                      ),
+                      opacity: 0.1,
+                    ),
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black87 // Dark theme background
+                        : Colors.white, // Light theme background
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: TableCalendar(
+                    daysOfWeekHeight: 36,
+                    calendarStyle:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? MyCalendarTheme.darkCalendarStyle
+                            : MyCalendarTheme.lightCalendarStyle,
                     firstDay:
                         DateTime.utc(DateTime.now().year, DateTime.january, 1),
                     lastDay: DateTime.utc(
                         DateTime.now().year, DateTime.december, 31),
                     focusedDay: _focusedDay,
-                    headerStyle: const HeaderStyle(
-                      titleCentered: true,
-                      formatButtonVisible: false,
-                    ),
-                    calendarStyle: CalendarStyle(
-                      todayDecoration: BoxDecoration(
-                        color: Colors.blueAccent.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      selectedDecoration: const BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.circle,
-                      ),
-                      markerDecoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      markersAlignment: Alignment.bottomCenter,
-                      markersAnchor: 0.8,
-                      markerSize: 8,
-                      markerMargin: const EdgeInsets.symmetric(horizontal: 0.8),
-                      todayTextStyle: const TextStyle(color: Colors.blue),
-                      selectedTextStyle: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                      weekendTextStyle: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                      ),
-                      defaultTextStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                    ),
+                    headerStyle: MyCalendarTheme.headerStyle(context),
                     calendarFormat: _calendarFormat,
                     selectedDayPredicate: (day) {
                       return isSameDay(_selectedDay, day);
@@ -142,13 +130,6 @@ class _SchedulePageState extends State<SchedulePage> {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
                       });
-                    },
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
                     },
                     onPageChanged: (focusedDay) {
                       _focusedDay = focusedDay;

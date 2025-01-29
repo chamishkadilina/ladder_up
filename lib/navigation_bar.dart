@@ -14,89 +14,82 @@ class MyNavigationBar extends StatefulWidget {
 class _MyNavigationBarState extends State<MyNavigationBar> {
   int currentPageIndex = 0;
 
+  final List<Widget> _pages = [
+    const HomePage(),
+    const SchedulePage(),
+    const TargetPage(),
+    const SettingsPage(),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    // Detect current theme mode
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: [
-        const HomePage(),
-        const SchedulePage(),
-        const TargetPage(),
-        const SettingsPage(),
-      ][currentPageIndex],
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // a divider line for more visual separation
-          Divider(
-            height: 0,
-            color: isDarkMode ? Colors.grey[800] : Colors.grey[300],
+      body: _pages[currentPageIndex],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: isDarkMode ? Colors.grey[800]! : Colors.grey[300]!,
+              width: 0.5,
+            ),
           ),
-          BottomNavigationBar(
-            currentIndex: currentPageIndex,
-            onTap: (index) {
-              setState(() {
-                currentPageIndex = index;
-              });
-            },
-            items: [
-              BottomNavigationBarItem(
-                icon: Image.asset(
-                  'assets/icons/outlined/Home.png',
-                  width: 24,
-                ),
-                activeIcon: Image.asset(
-                  isDarkMode
-                      ? 'assets/icons/filled/dark_mode/Home.png'
-                      : 'assets/icons/filled/white_mode/Home.png',
-                  width: 24,
-                ),
-                label: 'Home',
+        ),
+        child: BottomNavigationBar(
+          currentIndex: currentPageIndex,
+          onTap: (index) {
+            setState(() {
+              currentPageIndex = index;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                'assets/icons/outlined/Home.png',
+                width: 24,
               ),
-              BottomNavigationBarItem(
-                icon: Image.asset(
-                  'assets/icons/outlined/Schedule.png',
-                  width: 24,
-                ),
-                activeIcon: Image.asset(
-                  isDarkMode
-                      ? 'assets/icons/filled/dark_mode/Schedule.png'
-                      : 'assets/icons/filled/white_mode/Schedule.png',
-                  width: 24,
-                ),
-                label: 'Schedule',
+              activeIcon: Image.asset(
+                'assets/icons/filled/Home.png',
+                width: 24,
               ),
-              BottomNavigationBarItem(
-                icon: Image.asset(
-                  'assets/icons/outlined/Target.png',
-                  width: 24,
-                ),
-                activeIcon: Image.asset(
-                  isDarkMode
-                      ? 'assets/icons/filled/dark_mode/Target.png'
-                      : 'assets/icons/filled/white_mode/Target.png',
-                  width: 24,
-                ),
-                label: 'Target',
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                'assets/icons/outlined/Schedule.png',
+                width: 24,
               ),
-              BottomNavigationBarItem(
-                icon: Image.asset(
-                  'assets/icons/outlined/Settings.png',
-                  width: 24,
-                ),
-                activeIcon: Image.asset(
-                  isDarkMode
-                      ? 'assets/icons/filled/dark_mode/Settings.png'
-                      : 'assets/icons/filled/white_mode/Settings.png',
-                  width: 24,
-                ),
-                label: 'Settings',
+              activeIcon: Image.asset(
+                'assets/icons/filled/Schedule.png',
+                width: 24,
               ),
-            ],
-          ),
-        ],
+              label: 'Schedule',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                'assets/icons/outlined/Target.png',
+                width: 24,
+              ),
+              activeIcon: Image.asset(
+                'assets/icons/filled/Target.png',
+                width: 24,
+              ),
+              label: 'Target',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                'assets/icons/outlined/Settings.png',
+                width: 24,
+              ),
+              activeIcon: Image.asset(
+                'assets/icons/filled/Settings.png',
+                width: 24,
+              ),
+              label: 'Settings',
+            ),
+          ],
+        ),
       ),
     );
   }

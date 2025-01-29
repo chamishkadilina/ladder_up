@@ -15,8 +15,8 @@ class PremiumTile extends StatelessWidget {
           // Gradient background with depth
           gradient: LinearGradient(
             colors: [
-              const Color(0xFF754BE5).withOpacity(0.9),
-              const Color(0xFFF83EFF).withOpacity(0.9),
+              const Color(0xFF754BE5).withValues(alpha: 0.9),
+              const Color(0xFFF83EFF).withValues(alpha: 0.9),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -25,7 +25,7 @@ class PremiumTile extends StatelessWidget {
           // Subtle shadow for depth
           boxShadow: [
             BoxShadow(
-              color: Colors.purple.withOpacity(0.3),
+              color: Colors.purple.withValues(alpha: 0.3),
               spreadRadius: 2,
               blurRadius: 10,
               offset: const Offset(0, 4),
@@ -42,7 +42,7 @@ class PremiumTile extends StatelessWidget {
                 opacity: 0.5,
                 child: Icon(
                   Icons.star,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   size: 50,
                 ),
               ),

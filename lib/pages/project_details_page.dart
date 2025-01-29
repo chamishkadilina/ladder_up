@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/models/project.dart';
 import 'package:ladder_up/providers/project_provider.dart';
+import 'package:ladder_up/theme/custom_themes/text_theme.dart';
 import 'package:ladder_up/widgets/dialogs/add_task_to_project_dialog.dart';
 import 'package:ladder_up/widgets/dialogs/project_delete_dialog.dart';
 import 'package:ladder_up/widgets/dialogs/project_rename_dialog.dart.dart';
@@ -41,7 +42,13 @@ class ProjectDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Project Details'),
+        title: const Text(
+          'Project Details',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         centerTitle: true,
         actions: [
           // Pop up menu button
@@ -84,11 +91,13 @@ class ProjectDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Top section - Project title, dates, and progress
+            // Top section (project tile)
             Card(
               margin:
-                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 0.0),
-              color: Colors.white,
+                  const EdgeInsets.symmetric(vertical: 2.0, horizontal: 0.0),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF151515)
+                  : Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -96,11 +105,15 @@ class ProjectDetailsPage extends StatelessWidget {
               child: ListTile(
                 leading: Text(
                   project.emoji,
-                  style: const TextStyle(fontSize: 24),
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? MyTextTheme.darkTextTheme.headlineLarge
+                      : MyTextTheme.lightTextTheme.headlineLarge,
                 ),
                 title: Text(
                   project.name,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? MyTextTheme.darkTextTheme.titleLarge
+                      : MyTextTheme.lightTextTheme.titleLarge,
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,14 +124,15 @@ class ProjectDetailsPage extends StatelessWidget {
                       children: [
                         Text(
                           '$formattedStartDate - $formattedEndDate',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge
-                              ?.copyWith(color: Colors.grey),
+                          style: Theme.of(context).brightness == Brightness.dark
+                              ? MyTextTheme.darkTextTheme.labelMedium
+                              : MyTextTheme.lightTextTheme.labelMedium,
                         ),
                         Text(
                           '$progress %',
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style: Theme.of(context).brightness == Brightness.dark
+                              ? MyTextTheme.darkTextTheme.titleLarge
+                              : MyTextTheme.lightTextTheme.titleLarge,
                         ),
                       ],
                     ),
@@ -127,23 +141,16 @@ class ProjectDetailsPage extends StatelessWidget {
                       value: totalSubtasks > 0
                           ? completedSubtasks / totalSubtasks
                           : 0, // Avoid division by zero
-                      minHeight: 4,
-                      backgroundColor: Colors.grey[300],
+                      minHeight: 6,
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black
+                              : Colors.grey.shade200,
                       color: Colors.blueAccent,
                     ),
                     const SizedBox(height: 8),
                   ],
                 ),
-                onTap: () {
-                  // Navigate to Project Details Page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ProjectDetailsPage(project: project),
-                    ),
-                  );
-                },
               ),
             ),
             const SizedBox(height: 16),
@@ -167,7 +174,8 @@ class ProjectDetailsPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Center(
                       child: Text(
-                        'No tasks are currently in progress. Add a new task to get started!',
+                        "No tasks in progress yet. Create a task to kickstart your project and move forward!",
+                        textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium
@@ -180,7 +188,7 @@ class ProjectDetailsPage extends StatelessWidget {
                     projectProvider: projectProvider,
                     project: project,
                   ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
 
             // Completed Tasks
             Text(
@@ -201,7 +209,8 @@ class ProjectDetailsPage extends StatelessWidget {
                             scale: 2.4,
                           ),
                           Text(
-                            'No tasks have been completed yet.',
+                            "You're making progress! No tasks completed yet, but you're on the right track.",
+                            textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium

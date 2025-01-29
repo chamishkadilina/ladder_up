@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ladder_up/navigation_bar.dart';
 import 'package:ladder_up/providers/target_provider.dart';
+import 'package:ladder_up/theme/custom_themes/text_theme.dart';
 import 'package:provider/provider.dart';
 
 class TargetPage extends StatefulWidget {
@@ -25,7 +26,55 @@ class _TargetPageState extends State<TargetPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black87,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return const MyNavigationBar();
+                },
+              ),
+            );
+          },
+        ),
+        title: Text(
+          'My Target',
+          style: Theme.of(context).brightness == Brightness.dark
+              ? MyTextTheme.darkTextTheme.titleLarge
+              : MyTextTheme.lightTextTheme.titleLarge,
+        ),
+        centerTitle: true,
+        actions: [
+          Consumer<TargetProvider>(
+            builder: (context, targetProvider, child) {
+              return IconButton(
+                icon: Icon(
+                  targetProvider.isEditing ? Icons.check : Icons.edit,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black87,
+                ),
+                onPressed: targetProvider.isEditing
+                    ? () {
+                        targetProvider.updateTarget(
+                          _titleController.text,
+                          _descriptionController.text,
+                        );
+                      }
+                    : targetProvider.toggleEditMode,
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Consumer<TargetProvider>(
           builder: (context, targetProvider, child) {
@@ -42,41 +91,6 @@ class _TargetPageState extends State<TargetPage> {
 
             return CustomScrollView(
               slivers: [
-                SliverAppBar(
-                  floating: true,
-                  backgroundColor: Colors.white,
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return const MyNavigationBar();
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  title: const Text('My Target'),
-                  centerTitle: true,
-                  actions: [
-                    IconButton(
-                      icon: Icon(
-                        targetProvider.isEditing ? Icons.check : Icons.edit,
-                        color: Colors.black,
-                      ),
-                      onPressed: targetProvider.isEditing
-                          ? () {
-                              targetProvider.updateTarget(
-                                _titleController.text,
-                                _descriptionController.text,
-                              );
-                            }
-                          : targetProvider.toggleEditMode,
-                    ),
-                  ],
-                ),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverToBoxAdapter(
@@ -99,20 +113,16 @@ class _TargetPageState extends State<TargetPage> {
       children: [
         Text(
           targetProvider.currentTarget!.title,
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: Theme.of(context).brightness == Brightness.dark
+              ? MyTextTheme.darkTextTheme.displayLarge
+              : MyTextTheme.lightTextTheme.displayLarge,
         ),
         const SizedBox(height: 16),
         Text(
           targetProvider.currentTarget!.description,
-          style: const TextStyle(
-            fontSize: 18,
-            color: Colors.black54,
-            height: 1.5,
-          ),
+          style: Theme.of(context).brightness == Brightness.dark
+              ? MyTextTheme.darkTextTheme.bodyMedium
+              : MyTextTheme.lightTextTheme.bodyMedium,
         ),
       ],
     );
@@ -127,17 +137,17 @@ class _TargetPageState extends State<TargetPage> {
           decoration: InputDecoration(
             hintText: 'Title',
             hintStyle: TextStyle(
-              color: Colors.grey.shade900,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+              fontSize: 28.0,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? MyTextTheme.darkTextTheme.headlineLarge?.color
+                  : MyTextTheme.lightTextTheme.headlineLarge?.color,
             ),
             border: InputBorder.none,
           ),
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: Theme.of(context).brightness == Brightness.dark
+              ? MyTextTheme.darkTextTheme.displayLarge
+              : MyTextTheme.lightTextTheme.displayLarge,
           maxLines: null,
         ),
         const SizedBox(height: 16),
@@ -146,16 +156,16 @@ class _TargetPageState extends State<TargetPage> {
           decoration: InputDecoration(
             hintText: 'Write your target description...',
             hintStyle: TextStyle(
-              color: Colors.grey.shade900,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? MyTextTheme.darkTextTheme.bodyMedium?.color
+                  : MyTextTheme.lightTextTheme.bodyMedium?.color,
               fontSize: 18,
             ),
             border: InputBorder.none,
           ),
-          style: const TextStyle(
-            fontSize: 18,
-            color: Colors.black54,
-            height: 1.5,
-          ),
+          style: Theme.of(context).brightness == Brightness.dark
+              ? MyTextTheme.darkTextTheme.bodyMedium
+              : MyTextTheme.lightTextTheme.bodyMedium,
           maxLines: null,
           keyboardType: TextInputType.multiline,
         ),

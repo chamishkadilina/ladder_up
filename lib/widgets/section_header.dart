@@ -19,6 +19,8 @@ class SectionHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        const SizedBox(width: 8),
+
         // Title header
         Text(
           title,
@@ -38,15 +40,18 @@ class SectionHeader extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF151515)
+                    : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.add,
-                color: Color(0xFF754BE5),
+                color: Color(0xFF009AFF),
               ),
             ),
           ),
+        const SizedBox(width: 8),
       ],
     );
   }
