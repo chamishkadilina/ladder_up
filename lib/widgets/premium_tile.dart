@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:ladder_up/pages/premium_upgrade_page%20.dart';
 
-class PremiumTile extends StatelessWidget {
+class PremiumTile extends StatefulWidget {
   const PremiumTile({super.key});
 
+  @override
+  State<PremiumTile> createState() => _PremiumTileState();
+}
+
+class _PremiumTileState extends State<PremiumTile> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Add your upgrade logic here
+        setState(() {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) {
+              return const PremiumUpgradeScreen();
+            },
+          ));
+        });
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
