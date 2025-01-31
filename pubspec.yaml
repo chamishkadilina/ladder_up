@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   cached_network_image: ^3.4.1
+  carousel_slider: ^5.0.0
   cloud_firestore: ^5.5.0
   connectivity_plus: ^6.1.2
   cupertino_icons: ^1.0.8
@@ -74,13 +75,13 @@ flutter:
     - assets/icons/outlined/
     - assets/wallpapers/
     - assets/images/
+    - assets/banners/
   fonts:
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter-Regular.ttf
         - asset: assets/fonts/Inter-Bold.ttf
           weight: 700
-
 
 flutter_launcher_icons:
   android: "my_progress"
